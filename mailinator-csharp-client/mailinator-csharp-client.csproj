@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <RootNamespace>mailinator_csharp_client</RootNamespace>
+    <PackageId>MailinatorApiClient</PackageId>
+    <Company>Manybrain, LLC</Company>
+    <RepositoryUrl>https://github.com/manybrain/mailinator-csharp-client</RepositoryUrl>
+    <Description>Client Library used to interact with the Mailinator API</Description>
+    <PackageProjectUrl></PackageProjectUrl>
+    <Copyright>© Manybrain 2020</Copyright>
+    <Authors>Marian Melnychuk</Authors>
+    <PackageTags>Manybrain; ApiClient</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Product>MailinatorApiClient</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="RestSharp" Version="106.11.4" />
+  </ItemGroup>
+
+</Project>
