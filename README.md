@@ -202,6 +202,25 @@ Then you can configure the library with:
     DeleteAllDomainMessagesRequest deleteAllDomainMessagesRequest = new DeleteAllDomainMessagesRequest() { Domain = "yourDomainNameHere" };
     DeleteAllDomainMessagesResponse deleteAllDomainMessagesResponse = await mailinatorClient.MessagesClient.DeleteAllDomainMessagesAsync(deleteAllDomainMessagesRequest);
   ```
+  
+##### Stats methods:
+
+- Get Team / Team Stats:
+
+  ```csharp
+    using mailinator_csharp_client;
+    using mailinator_csharp_client.Models.Domains.Requests;
+    using mailinator_csharp_client.Models.Domains.Responses;
+
+    MailinatorClient mailinatorClient = new MailinatorClient("yourApiTokenHere");
+
+    //Get Team
+    GetTeamResponse getTeamResponse = await mailinatorClient.StatsClient.GetTeamAsync();
+	
+    //Get TeamStats
+    GetTeamStatsResponse getTeamStatsResponse = await mailinatorClient.StatsClient.GetTeamStatsAsync();
+    // ...
+  ```
 
 ##### Build with tests
 
