@@ -14,6 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Product>MailinatorApiClient</Product>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

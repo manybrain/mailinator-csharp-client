@@ -14,10 +14,12 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
     public class MessagesClient : IApiClient
     {
         private readonly IHttpClient httpClient;
+        private readonly string endpointUrl;
 
-        public MessagesClient(IHttpClient httpClient)
+        public MessagesClient(IHttpClient httpClient, string endpointUrl)
         {
             this.httpClient = httpClient;
+            this.endpointUrl = endpointUrl;
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<FetchInboxResponse> FetchInboxAsync(FetchInboxRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{inbox}", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}", Method.GET);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddSafeQueryParameter("skip", request.Skip.ToString());
@@ -46,7 +48,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<FetchMessageResponse> FetchMessageAsync(FetchMessageRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{inbox}/messages/{messageId}", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}", Method.GET);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
@@ -62,7 +64,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<FetchSMSMessagesResponse> FetchSMSMessagesAsync(FetchSMSMessagesRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{teamSMSNumber}", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{teamSMSNumber}", Method.GET);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("teamSMSNumber", request.TeamSMSNumber);
 
@@ -77,7 +79,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<FetchAttachmentsResponse> FetchAttachmentsAsync(FetchAttachmentsRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{inbox}/messages/{messageId}/attachments", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}/attachments", Method.GET);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
@@ -93,7 +95,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<FetchAttachmentResponse> FetchAttachmentAsync(FetchAttachmentRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{inbox}/messages/{messageId}/attachments/{attachmentId}", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}/attachments/{attachmentId}", Method.GET);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
@@ -120,7 +122,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<FetchMessageLinksResponse> FetchMessageLinksAsync(FetchMessageLinksRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{inbox}/messages/{messageId}/links", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}/links", Method.GET);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
@@ -136,7 +138,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<DeleteAllDomainMessagesResponse> DeleteAllDomainMessagesAsync(DeleteAllDomainMessagesRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes", Method.DELETE);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes", Method.DELETE);
             requestObject.AddUrlSegment("domain", request.Domain);
 
             var response = await httpClient.ExecuteAsync<DeleteAllDomainMessagesResponse>(requestObject);
@@ -150,7 +152,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<DeleteAllInboxMessagesResponse> DeleteAllInboxMessagesAsync(DeleteAllInboxMessagesRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{inbox}", Method.DELETE);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}", Method.DELETE);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
 
@@ -165,7 +167,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<DeleteMessageResponse> DeleteMessageAsync(DeleteMessageRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{inbox}/messages/{messageId}", Method.DELETE);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}", Method.DELETE);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
@@ -187,7 +189,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<InjectMessageResponse> InjectMessageAsync(InjectMessageRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain}/inboxes/{inbox}/messages", Method.POST);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages", Method.POST);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             
