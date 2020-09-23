@@ -32,7 +32,7 @@ namespace mailinator_csharp_client.Clients.HttpClient
 			var response = await restClient.ExecuteAsync<T>(request);
 
 			if (!response.IsSuccessful)
-				throw new ApiException($"Status description: {response.StatusDescription}. Content: {response.Content}. ErrorMessage: {response.ErrorMessage}");
+				throw new ApiException(response.StatusCode, response.StatusDescription, response.Content, response.ErrorMessage);
 
 			return response.Data;
 		}
@@ -42,7 +42,7 @@ namespace mailinator_csharp_client.Clients.HttpClient
 			var response = await restClient.ExecuteAsync(request);
 
 			if (!response.IsSuccessful)
-				throw new ApiException($"Status description: {response.StatusDescription}. Content: {response.Content}. ErrorMessage: {response.ErrorMessage}");
+				throw new ApiException(response.StatusCode, response.StatusDescription, response.Content, response.ErrorMessage);
 
 			return customDeserializationFunction(response);
 		}

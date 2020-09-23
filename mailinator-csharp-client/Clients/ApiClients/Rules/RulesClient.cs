@@ -17,10 +17,12 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
     public class RulesClient : IApiClient
     {
         private readonly IHttpClient httpClient;
+        private readonly string endpointUrl;
 
-        public RulesClient(IHttpClient httpClient)
+        public RulesClient(IHttpClient httpClient, string endpointUrl)
         {
             this.httpClient = httpClient;
+            this.endpointUrl = endpointUrl;
         }
 
         /// <summary>
@@ -30,7 +32,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// <returns></returns>
         public async Task<CreateRuleResponse> CreateRuleAsync(CreateRuleRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain_id}/rules", Method.POST);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules", Method.POST);
             requestObject.AddUrlSegment("domain_id", request.DomainId);
 
             requestObject.JsonSerializer = new DynamicJsonSerializer();
@@ -48,7 +50,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// <returns></returns>
         public async Task<EnableRuleResponse> EnableRuleAsync(EnableRuleRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain_id}/rules/{ruleId}/enable", Method.PUT);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules/{ruleId}/enable", Method.PUT);
             requestObject.AddUrlSegment("domain_id", request.DomainId);
             requestObject.AddUrlSegment("ruleId", request.RuleId);
 
@@ -63,7 +65,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// <returns></returns>
         public async Task<DisableRuleResponse> DisableRuleAsync(DisableRuleRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain_id}/rules/{ruleId}/disable", Method.PUT);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules/{ruleId}/disable", Method.PUT);
             requestObject.AddUrlSegment("domain_id", request.DomainId);
             requestObject.AddUrlSegment("ruleId", request.RuleId);
 
@@ -78,7 +80,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// <returns></returns>
         public async Task<GetAllRulesResponse> GetAllRulesAsync(GetAllRulesRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain_id}/rules", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules", Method.GET);
             requestObject.AddUrlSegment("domain_id", request.DomainId);
 
             var response = await httpClient.ExecuteAsync<GetAllRulesResponse>(requestObject);
@@ -92,7 +94,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// <returns></returns>
         public async Task<GetRuleResponse> GetRuleAsync(GetRuleRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain_id}/rules/{ruleId}", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules/{ruleId}", Method.GET);
             requestObject.AddUrlSegment("domain_id", request.DomainId);
             requestObject.AddUrlSegment("ruleId", request.RuleId);
 
@@ -107,7 +109,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// <returns></returns>
         public async Task<DeleteRuleResponse> DeleteRuleAsync(DeleteRuleRequest request)
         {
-            var requestObject = httpClient.GetRequest("{domain_id}/rules/{ruleId}", Method.DELETE);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules/{ruleId}", Method.DELETE);
             requestObject.AddUrlSegment("domain_id", request.DomainId);
             requestObject.AddUrlSegment("ruleId", request.RuleId);
 
