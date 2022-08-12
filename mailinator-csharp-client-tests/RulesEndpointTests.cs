@@ -34,7 +34,7 @@ namespace mailinator_csharp_client_tests
                 Actions = new List<ActionRule>() { new ActionRule() { Action = ActionType.WEBHOOK, 
                                                                       ActionData = new ActionData() { Url = "https://google.com" } } }
             };
-            var request = new CreateRuleRequest() { DomainId = Domain.Id, Rule = rule };
+            var request = new CreateRuleRequest() { DomainId = Domain.Name, Rule = rule };
             var response = await mailinatorClient.RulesClient.CreateRuleAsync(request);
             Assert.IsTrue(response != null);
         }
@@ -42,7 +42,7 @@ namespace mailinator_csharp_client_tests
         [TestMethod, TestCategory("Rules.EnableRuleAsync")]
         public async Task EnableRuleAsync()
         {
-            var request = new EnableRuleRequest() { DomainId = Domain.Id, RuleId = Rule.Id };
+            var request = new EnableRuleRequest() { DomainId = Domain.Name, RuleId = Rule.Id };
             var response = await mailinatorClient.RulesClient.EnableRuleAsync(request);
             Assert.IsTrue(response?.Status == "ok");
         }
@@ -50,7 +50,7 @@ namespace mailinator_csharp_client_tests
         [TestMethod, TestCategory("Rules.DisableRuleAsync")]
         public async Task DisableRuleAsync()
         {
-            var request = new DisableRuleRequest() { DomainId = Domain.Id, RuleId = Rule.Id };
+            var request = new DisableRuleRequest() { DomainId = Domain.Name, RuleId = Rule.Id };
             var response = await mailinatorClient.RulesClient.DisableRuleAsync(request);
             Assert.IsTrue(response?.Status == "ok");
         }
@@ -58,7 +58,7 @@ namespace mailinator_csharp_client_tests
         [TestMethod, TestCategory("Rules.GetAllRulesAsync")]
         public async Task GetAllRulesAsync()
         {
-            var request = new GetAllRulesRequest() { DomainId = Domain.Id };
+            var request = new GetAllRulesRequest() { DomainId = Domain.Name };
             var response = await mailinatorClient.RulesClient.GetAllRulesAsync(request);
             Assert.IsTrue(response != null);
         }
@@ -66,7 +66,7 @@ namespace mailinator_csharp_client_tests
         [TestMethod, TestCategory("Rules.GetRuleAsync")]
         public async Task GetRuleAsync()
         {
-            var request = new GetRuleRequest() { DomainId = Domain.Id, RuleId = Rule.Id };
+            var request = new GetRuleRequest() { DomainId = Domain.Name, RuleId = Rule.Id };
             var response = await mailinatorClient.RulesClient.GetRuleAsync(request);
             Assert.IsTrue(response != null);
         }

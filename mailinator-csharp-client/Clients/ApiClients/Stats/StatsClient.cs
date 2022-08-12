@@ -29,7 +29,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Stats
         /// <returns></returns>
         public async Task<GetTeamStatsResponse> GetTeamStatsAsync()
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/stats", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/stats", Method.Get);
             
             var response = await httpClient.ExecuteAsync<GetTeamStatsResponse>(requestObject);
             return response;
@@ -41,7 +41,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Stats
         /// <returns></returns>
         public async Task<GetTeamResponse> GetTeamAsync()
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/", Method.Get);
 
             var response = await httpClient.ExecuteAsync<GetTeamResponse>(requestObject);
             return response;

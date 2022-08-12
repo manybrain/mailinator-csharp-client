@@ -17,7 +17,7 @@ namespace mailinator_csharp_client_tests
         [TestMethod, TestCategory("Domains.GetDomainAsync")]
         public async Task GetDomainAsync()
         {
-            var request = new GetDomainRequest() { DomainId = Domain.Id };
+            var request = new GetDomainRequest() { DomainId = Domain.Name };
             var response = await mailinatorClient.DomainsClient.GetDomainAsync(request);
             Assert.IsTrue(response != null);
         }

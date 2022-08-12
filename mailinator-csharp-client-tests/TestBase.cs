@@ -106,7 +106,7 @@ namespace mailinator_csharp_client_tests
 
         private Rule GetFirstRuleFromServer()
         {
-            var getAllRulesRequest = new GetAllRulesRequest() { DomainId = Domain.Id };
+            var getAllRulesRequest = new GetAllRulesRequest() { DomainId = Domain.Name };
             var getAllRulesResponse = mailinatorClient.RulesClient.GetAllRulesAsync(getAllRulesRequest).Result;
 
             if (getAllRulesResponse == null)
