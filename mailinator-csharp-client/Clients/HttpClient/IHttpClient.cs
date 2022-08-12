@@ -8,6 +8,6 @@ namespace mailinator_csharp_client.Clients.HttpClient
 	{
 		RestRequest GetRequest(string url, Method method);
 		Task<T> ExecuteAsync<T>(RestRequest request);
-		Task<T> ExecuteAsync<T>(RestRequest request, Func<IRestResponse, T> customDeserializationFunction);
+		Task<T> ExecuteAsync<T>(RestRequest request, Func<RestResponse, T> customDeserializationFunction);
 	}
 }

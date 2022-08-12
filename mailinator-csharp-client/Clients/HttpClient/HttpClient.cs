@@ -12,12 +12,13 @@ namespace mailinator_csharp_client.Clients.HttpClient
 
 		public HttpClient(string apiKey, string baseUri)
 		{
-            restClient = new RestClient(baseUri)
-            {
-                Timeout = TIMEOUT_MS
-            };
+			var options = new RestClientOptions(baseUri)
+			{
+				MaxTimeout = TIMEOUT_MS
+			};
 
-            restClient.AddHandler("application/json", () => new DynamicJsonSerializer());
+			restClient = new RestClient(options);
+			restClient.UseSerializer(() => new DynamicJsonSerializer());
 
 			restClient.AddDefaultHeader("Authorization", apiKey);
 		}
@@ -37,7 +38,7 @@ namespace mailinator_csharp_client.Clients.HttpClient
 			return response.Data;
 		}
 
-		public async Task<T> ExecuteAsync<T>(RestRequest request, Func<IRestResponse, T> customDeserializationFunction)
+		public async Task<T> ExecuteAsync<T>(RestRequest request, Func<RestResponse, T> customDeserializationFunction)
 		{
 			var response = await restClient.ExecuteAsync(request);
 

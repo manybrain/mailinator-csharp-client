@@ -28,7 +28,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Domains
         /// <returns></returns>
         public async Task<GetAllDomainsResponse> GetAllDomainsAsync()
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/", Method.Get);
 
             var response = await httpClient.ExecuteAsync<GetAllDomainsResponse>(requestObject);
             return response;
@@ -41,7 +41,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Domains
         /// <returns></returns>
         public async Task<GetDomainResponse> GetDomainAsync(GetDomainRequest request)
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}", Method.GET);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}", Method.Get);
             requestObject.AddUrlSegment("domain_id", request.DomainId);
 
             var response = await httpClient.ExecuteAsync<GetDomainResponse>(requestObject);

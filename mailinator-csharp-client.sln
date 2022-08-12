@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30503.244
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mailinator-csharp-client", "mailinator-csharp-client\mailinator-csharp-client.csproj", "{7AB3B7CD-7633-4DE4-8B8B-4A3B3924E085}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mailinator-csharp-client", "mailinator-csharp-client\mailinator-csharp-client.csproj", "{7AB3B7CD-7633-4DE4-8B8B-4A3B3924E085}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mailinator-csharp-client-tests", "mailinator-csharp-client-tests\mailinator-csharp-client-tests.csproj", "{D59A67E5-DE4B-49AF-BD14-143091B46527}"
 EndProject
