@@ -24,7 +24,7 @@ namespace mailinator_csharp_client.Helpers
             public string RootElement { get; set; }
             public string Namespace { get; set; }
             public string DateFormat { get; set; }
-            public string ContentType { get => "application/json"; set { } }
+            public ContentType ContentType { get => ContentType.Json; set { } }
 
             public T Deserialize<T>(RestResponse response)
             {

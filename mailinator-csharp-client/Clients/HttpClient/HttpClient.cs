@@ -17,8 +17,7 @@ namespace mailinator_csharp_client.Clients.HttpClient
 				MaxTimeout = TIMEOUT_MS
 			};
 
-			restClient = new RestClient(options);
-			restClient.UseSerializer(() => new DynamicJsonSerializer());
+			restClient = new RestClient(options, configureSerialization: s => s.UseSerializer(() => new DynamicJsonSerializer()));
 
 			restClient.AddDefaultHeader("Authorization", apiKey);
 		}
