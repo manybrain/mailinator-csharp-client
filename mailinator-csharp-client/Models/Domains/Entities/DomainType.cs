@@ -2,11 +2,9 @@
 
 namespace mailinator_csharp_client.Models.Domains.Entities
 {
-    public enum DomainType
+    public class DomainType
     {
-        [EnumMember(Value = "private")]
-        Private,
-        [EnumMember(Value = "public")]
-        Public
+        public const string PRIVATE = "private";
+        public const string PUBLIC = "public";
     }
 }

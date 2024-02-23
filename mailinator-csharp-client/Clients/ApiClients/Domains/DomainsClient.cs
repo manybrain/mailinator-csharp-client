@@ -47,5 +47,33 @@ namespace mailinator_csharp_client.Clients.ApiClients.Domains
             var response = await httpClient.ExecuteAsync<GetDomainResponse>(requestObject);
             return response;
         }
+
+        /// <summary>
+        /// This endpoint creates a private domain attached to your account. Note, the domain must be unique to the system and you must have not reached your maximum number of Private Domains.
+        /// </summary>
+        /// <param name="request">CreateDomainRequest object.</param>
+        /// <returns></returns>
+        public async Task<CreateDomainResponse> CreateDomainAsync(CreateDomainRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}", Method.Post);
+            requestObject.AddUrlSegment("domain_id", request.Name);
+
+            var response = await httpClient.ExecuteAsync<CreateDomainResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// This endpoint deletes a Private Domain
+        /// </summary>
+        /// <param name="request">DeleteDomainRequest object.</param>
+        /// <returns></returns>
+        public async Task<DeleteDomainResponse> DeleteDomainAsync(DeleteDomainRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}", Method.Delete);
+            requestObject.AddUrlSegment("domain_id", request.DomainId);
+
+            var response = await httpClient.ExecuteAsync<DeleteDomainResponse>(requestObject);
+            return response;
+        }
     }
 }

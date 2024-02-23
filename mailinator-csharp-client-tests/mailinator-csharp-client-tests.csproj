@@ -50,6 +50,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthenticatorsEndpointTests.cs" />
+    <Compile Include="WebhooksEndpointTests.cs" />
     <Compile Include="StatsEndpointTests.cs" />
     <Compile Include="DomainsEndpointTests.cs" />
     <Compile Include="MessagesEndpointTests.cs" />

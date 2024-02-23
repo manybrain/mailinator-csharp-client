@@ -2,7 +2,7 @@
 
 namespace mailinator_csharp_client.Models.Messages.Requests
 {
-    public class FetchMessageLinksRequest
+    public class FetchMessageAttachmentsRequest
     {
         [JsonProperty("domain")]
         public string Domain { get; set; }

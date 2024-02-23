@@ -1,3 +1,4 @@
+
 # Mailinator API Client Library
 
 C# Client Library used to interact with the [Mailinator](https://www.mailinator.com/) API
@@ -23,6 +24,31 @@ Then you can configure the library with:
 
 ## Examples
 
+##### Authenticators methods:
+
+- InstantTOTP2FACode / Get Authenticators / Get Authenticators By Id:
+
+  ```csharp
+    using mailinator_csharp_client;
+    using mailinator_csharp_client.Models.Domains.Requests;
+    using mailinator_csharp_client.Models.Domains.Responses;
+
+	MailinatorClient mailinatorClient = new MailinatorClient("yourApiTokenHere");
+
+    //InstantTOTP2FACode
+	InstantTOTP2FACodeRequest instantTOTP2FACodeRequest = new InstantTOTP2FACodeRequest() { TotpSecretKey = "yourAuthSecret" };
+	var instantTOTP2FACodeResponse = await mailinatorClient.AuthenticatorsClient.InstantTOTP2FACodeAsync(instantTOTP2FACodeRequest);
+	
+	//Get Authenticators
+	GetAuthenticatorsResponse getAuthenticatorsResponse = await mailinatorClient.AuthenticatorsClient.GetAuthenticatorsAsync();
+	
+	//Get Authenticators By Id
+	GetAuthenticatorsByIdRequest getAuthenticatorsByIdRequest = new GetAuthenticatorsByIdRequest() { Id = "yourAuthId" };
+	GetAuthenticatorsByIdResponse getAuthenticatorsByIdResponse = await mailinatorClient.AuthenticatorsClient.GetAuthenticatorsByIdAsync(getAuthenticatorsByIdRequest);
+	
+    // ...
+  ```
+
 ##### Domains methods:
 
 - Get AllDomains / Domain:
@@ -40,6 +66,31 @@ Then you can configure the library with:
 	//Get Domain
 	GetDomainRequest getDomainRequest = new GetDomainRequest() { DomainId = "yourDomainIdHere" };
     GetDomainResponse getDomainResponse = await mailinatorClient.DomainsClient.GetDomainAsync(getDomainRequest);
+    // ...
+  ```
+
+- Create / Delete Domain:
+
+  ```csharp
+    using mailinator_csharp_client;
+    using mailinator_csharp_client.Models.Domains.Requests;
+    using mailinator_csharp_client.Models.Domains.Responses;
+
+	MailinatorClient mailinatorClient = new MailinatorClient("yourApiTokenHere");
+
+    //Create Domain
+    CreateDomainRequest createDomainRequest = new CreateDomainRequest() 
+	    { 
+		    Name = DateTime.UtcNow.Ticks.ToString(), 
+		    Description = "Description", 
+		    Enabled = true, 
+		    Rules = new System.Collections.Generic.List<mailinator_csharp_client.Models.Rules.Entities.Rule>() 
+		 };
+	CreateDomainResponse createDomainResponse = await mailinatorClient.DomainsClient.CreateDomainAsync(createDomainRequest );
+	
+	//Delete Domain
+	var deleteDomainRequest = new DeleteDomainRequest() { DomainId = "yourDomainIdHere" };
+	DeleteDomainResponse deleteDomainResponse = await mailinatorClient.DomainsClient.DeleteDomainAsync(deleteDomainRequest);
     // ...
   ```
 
@@ -87,7 +138,7 @@ Then you can configure the library with:
         // ...
   ```
 
-- Enable/Disable Rule:
+- Enable / Disable Rule:
 
   ```csharp
     using mailinator_csharp_client;
@@ -125,7 +176,7 @@ Then you can configure the library with:
 
 ##### Messages methods:
 
-- Inject Message:
+- Post Message:
 
   ```csharp
     using mailinator_csharp_client;
@@ -141,12 +192,12 @@ Then you can configure the library with:
                 From = "test_email@test.com",
                 Text = "Hello World!"
             };
-    InjectMessageRequest injectMessageRequest = new InjectMessageRequest() { Domain = "yourDomainNameHere", Inbox = "yourInboxHere", Message = messageToPost };
-    InjectMessageResponse injectMessageResponse = await mailinatorClient.MessagesClient.InjectMessageAsync(injectMessageRequest);
+    PostMessageRequest postMessageRequest = new PostMessageRequest() { Domain = "yourDomainNameHere", Inbox = "yourInboxHere", Message = messageToPost };
+    PostMessageResponse postMessageResponse = await mailinatorClient.MessagesClient.PostNewMessageAsync(postMessageRequest);
     // ...
   ```
 
-- Fetch Inbox / Message / SMS Messages / Attachments / Attachment:
+- Fetch Inbox / Message / SMS Messages / Attachments / Attachment / Smtp Log / Raw / Latest:
 
   ```csharp
     using mailinator_csharp_client;
@@ -174,11 +225,23 @@ Then you can configure the library with:
     
     //Fetch Attachment
     FetchAttachmentRequest fetchAttachmentRequest = new FetchAttachmentRequest() { Domain = "yourDomainNameHere", Inbox = "yourInboxHere", MessageId = "yourMessageIdWithAttachmentHere", AttachmentId = "yourAttachmentIdHere" };
-            FetchAttachmentResponse fetchAttachmentResponse = await mailinatorClient.MessagesClient.FetchAttachmentAsync(fetchAttachmentRequest);
+    FetchAttachmentResponse fetchAttachmentResponse = await mailinatorClient.MessagesClient.FetchAttachmentAsync(fetchAttachmentRequest);
             
     //Fetch Message Links
     FetchMessageLinksRequest fetchMessageLinksRequest = new FetchMessageLinksRequest() { Domain = "yourDomainNameHere", Inbox = "yourInboxHere", MessageId = "yourMessageIdWithAttachmentHere" };
-            FetchMessageLinksResponse fetchMessageLinksResponse = await mailinatorClient.MessagesClient.FetchMessageLinksAsync(fetchMessageLinksRequest);
+    FetchMessageLinksResponse fetchMessageLinksResponse = await mailinatorClient.MessagesClient.FetchMessageLinksAsync(fetchMessageLinksRequest);
+	
+	//Fetch Message Smtp Log
+	FetchMessageSmtpLogRequest fetchMessageSmtpLogRequest = new FetchMessageSmtpLogRequest() { Domain = "yourDomainNameHere", MessageId = "yourMessageIdHere" };
+	FetchMessageSmtpLogResponse fetchMessageSmtpLogResponse= await mailinatorClient.MessagesClient.FetchMessageSmtpLogAsync(fetchMessageSmtpLogRequest);
+	
+	//Fetch Message Raw
+	FetchMessageRawRequest fetchMessageRawRequest = new FetchMessageRawRequest() { Domain = "yourDomainNameHere", MessageId = "yourMessageIdHere" };
+	FetchMessageRawResponse fetchMessageRawResponse= await mailinatorClient.MessagesClient.FetchMessageRawAsync(fetchMessageRawRequest);
+	
+	//Fetch Latest Messages
+	FetchLatestMessagesRequest fetchLatestMessagesRequest = new FetchLatestMessagesRequest() { Domain = "yourDomainNameHere" };
+	FetchLatestMessagesResponse fetchLatestMessagesResponse = await mailinatorClient.MessagesClient.FetchLatestMessagesAsync(fetchLatestMessagesRequest);
   ```
 
 - Delete Message / AllInboxMessages / AllDomainMessages
@@ -222,6 +285,64 @@ Then you can configure the library with:
     // ...
   ```
 
+##### Webhooks methods:
+
+- Public Webhook / Public Inbox Webhook / Public Custom Service Webhook / Public Custom Service Inbox Webhook:
+
+  ```csharp
+    using mailinator_csharp_client;
+    using mailinator_csharp_client.Models.Domains.Requests;
+    using mailinator_csharp_client.Models.Domains.Responses;
+
+    MailinatorClient mailinatorClient = new MailinatorClient("yourApiTokenHere");
+    Webhook webhookToAdd = new Webhook { From = "MyMailinatorCSharpTest", Subject = "testing message", Text = "hello world", To = "jack" };
+
+    //Public Webhook
+    PublicWebhookRequest publicWebhookRequest = new PublicWebhookRequest() { Webhook = webhookToAdd };
+	PublicWebhookResponse publicWebhookResponse = await mailinatorClient.WebhooksClient.PublicWebhookAsync(publicWebhookRequest);
+	
+    //Public Inbox Webhook
+    PublicInboxWebhookRequest publicInboxWebhookRequest = new PublicInboxWebhookRequest() { Inbox = "yourWebhookInbox", Webhook = webhookToAdd };
+	PublicWebhookResponse publicInboxWebhookResponse = await mailinatorClient.WebhooksClient.PublicInboxWebhookAsync(publicInboxWebhookRequest);
+	
+	//Public Custom Service Webhook
+    PublicCustomServiceWebhookRequest publicCustomServiceWebhookRequest = new PublicCustomServiceWebhookRequest() { CustomService = "yourWebhookCustomService", Webhook = webhookToAdd };
+	PublicCustomServiceWebhookResponse publicCustomServiceWebhookResponse = await mailinatorClient.WebhooksClient.PublicCustomServiceWebhookAsync(publicCustomServiceWebhookRequest );
+	
+	//Public Custom Service Inbox Webhook
+	PublicCustomServiceInboxWebhookRequest publicCustomServiceInboxWebhookRequest = new PublicCustomServiceInboxWebhookRequest() { CustomService = "yourWebhookCustomService", Inbox = "yourWebhookInbox", Webhook = webhookToAdd };
+	PublicCustomServiceWebhookResponse publicCustomServiceInboxWebhookResponse = await mailinatorClient.WebhooksClient.PublicCustomServiceInboxWebhookAsync(publicCustomServiceInboxWebhookRequest);
+    // ...
+  ```
+  
+- Private Webhook / Private Inbox Webhook / Private Custom Service Webhook / Private Custom Service Inbox Webhook:
+
+  ```csharp
+    using mailinator_csharp_client;
+    using mailinator_csharp_client.Models.Domains.Requests;
+    using mailinator_csharp_client.Models.Domains.Responses;
+
+    MailinatorClient mailinatorClient = new MailinatorClient("yourApiTokenHere");
+    Webhook webhookToAdd = new Webhook { From = "MyMailinatorCSharpTest", Subject = "testing message", Text = "hello world", To = "jack" };
+
+    //Private Webhook
+    PrivateWebhookRequest privateWebhookRequest = new PrivateWebhookRequest() { WebhookToken = "yourWebhookTokenPrivateDomain", Webhook = webhookToAdd };
+	PrivateWebhookResponse privateWebhookResponse = await mailinatorClient.WebhooksClient.PrivateWebhookAsync(privateWebhookRequest);
+	
+    //Private Inbox Webhook
+    PrivateInboxWebhookRequest privateInboxWebhookRequest = new PrivateInboxWebhookRequest() { WebhookToken = "yourWebhookTokenPrivateDomain", Inbox = "yourWebhookInbox", Webhook = webhookToAdd };
+	PrivateWebhookResponse privateInboxWebhookResponse = await mailinatorClient.WebhooksClient.PrivateInboxWebhookAsync(privateInboxWebhookRequest);
+	
+	//Private Custom Service Webhook
+    PrivateCustomServiceWebhookRequest privateCustomServiceWebhookRequest = new PrivateCustomServiceWebhookRequest() { WebhookToken = "yourWebhookTokenCustomService", CustomService = "yourWebhookCustomService", Webhook = webhookToAdd };
+	PrivateCustomServiceWebhookResponse privateCustomServiceWebhookResponse = await mailinatorClient.WebhooksClient.PrivateCustomServiceWebhookAsync(privateCustomServiceWebhookRequest);
+	
+	//Private Custom Service Inbox Webhook
+	PrivateCustomServiceInboxWebhookRequest privateCustomServiceInboxWebhookRequest = new PrivateCustomServiceInboxWebhookRequest() { WebhookToken = "yourWebhookTokenCustomService", CustomService = "yourWebhookCustomService", Inbox = "yourWebhookInbox", Webhook = webhookToAdd };
+	PrivateCustomServiceWebhookResponse privateCustomServiceInboxWebhookResponse = await mailinatorClient.WebhooksClient.PrivateCustomServiceInboxWebhookAsync(privateCustomServiceInboxWebhookRequest);
+    // ...
+  ```
+
 ##### Build with tests
 
 Some of the tests require env variables with valid values. Visit tests source code and review `TastBase.cs` class. The more env variables you set, the more tests are run.
@@ -233,3 +354,9 @@ Some of the tests require env variables with valid values. Visit tests source co
 * `MAILINATOR_TEST_MESSAGE_WITH_ATTACHMENT_ID` - existing message id within inbox (see above) within private domain (see above); see also https://manybrain.github.io/m8rdocs/#fetch-message
 * `MAILINATOR_TEST_ATTACHMENT_ID` - existing message id within inbox (see above) within private domain (see above); see also https://manybrain.github.io/m8rdocs/#fetch-message
 * `MAILINATOR_TEST_DELETE_DOMAIN` - don't use it unless you are 100% sure what you are doing
+* `MAILINATOR_TEST_WEBHOOKTOKEN_PRIVATEDOMAIN` - private domain for webhook token
+* `MAILINATOR_TEST_WEBHOOKTOKEN_CUSTOMSERVICE` - custom service for webhook token
+* `MAILINATOR_TEST_AUTH_SECRET` - authenticator secret
+* `MAILINATOR_TEST_AUTH_ID` - authenticator id
+* `MAILINATOR_TEST_WEBHOOK_INBOX` - inbox for webhook
+* `MAILINATOR_TEST_WEBHOOK_CUSTOMSERVICE` - custom service for webhook

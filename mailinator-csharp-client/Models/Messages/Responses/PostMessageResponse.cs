@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace mailinator_csharp_client.Models.Responses
 {
-    public class InjectMessageResponse
+    public class PostMessageResponse
     {
         [JsonProperty("status")]
         public string Status;

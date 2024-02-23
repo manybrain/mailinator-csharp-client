@@ -1,6 +1,7 @@
 ﻿using mailinator_csharp_client.Helpers;
 using RestSharp;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace mailinator_csharp_client.Clients.HttpClient
@@ -10,15 +11,27 @@ namespace mailinator_csharp_client.Clients.HttpClient
 		private const int TIMEOUT_MS = 100000;
 		private readonly RestClient restClient;
 
-		public HttpClient(string apiKey, string baseUri)
+        public HttpClient(string baseUri)
+        {
+            var options = new RestClientOptions(baseUri)
+            {
+                MaxTimeout = TIMEOUT_MS
+            };
+
+            restClient = new RestClient(options, configureSerialization: s => s.UseSerializer(() => new DynamicJsonSerializer()));
+
+            // Set UserAgent header with SDK version automatically
+            var assembly = Assembly.GetExecutingAssembly();
+            var assemblyVersion = assembly.GetName().Version;
+
+            // Extract major, minor, and build version numbers
+            var sdkVersion = $"{assemblyVersion.Major}.{assemblyVersion.Minor}.{assemblyVersion.Build}";
+
+            restClient.AddDefaultHeader("User-Agent", $"Mailinator SDK - .NET V{sdkVersion}");
+        }
+
+        public HttpClient(string apiKey, string baseUri) : this(baseUri)
 		{
-			var options = new RestClientOptions(baseUri)
-			{
-				MaxTimeout = TIMEOUT_MS
-			};
-
-			restClient = new RestClient(options, configureSerialization: s => s.UseSerializer(() => new DynamicJsonSerializer()));
-
 			restClient.AddDefaultHeader("Authorization", apiKey);
 		}
 
