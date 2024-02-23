@@ -1,5 +1,4 @@
-﻿using mailinator_csharp_client.Models.Domains.Requests;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
 namespace mailinator_csharp_client_tests

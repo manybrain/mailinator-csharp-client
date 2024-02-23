@@ -24,6 +24,15 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
 
         /// <summary>
         /// This endpoint retrieves a list of messages summaries. You can retreive a list by inbox, inboxes, or entire domain.
+        /// :domain	
+        /// public	Fetch Message Summaries from the Public Mailinator System
+        /// private Fetch Message Summaries from all Your Private Domains
+        /// [your_private_domain.com]   Fetch Message Summaries from a specific Private Domain
+        /// :inbox	
+        /// null	Fetch All Messages summaries for an entire domain
+        /// * Fetch All Messages summaries for an entire domain
+        /// [inbox_name] Fetch All Messages summaries for a given Inbox
+        /// [inbox_name *] Fetch All Messages summaries for a given Inbox Prefix
         /// </summary>
         /// <param name="request">FetchInboxRequest object.</param>
         /// <returns></returns>
@@ -42,15 +51,30 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         }
 
         /// <summary>
+        /// This endpoint retrieves a specific message by id for specific inbox.
+        /// </summary>
+        /// <param name="request">FetchInboxMessageRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchInboxMessageResponse> FetchInboxMessageAsync(FetchInboxMessageRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("inbox", request.Inbox);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<FetchInboxMessageResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
         /// This endpoint retrieves a specific message by id.
         /// </summary>
         /// <param name="request">FetchMessageRequest object.</param>
         /// <returns></returns>
         public async Task<FetchMessageResponse> FetchMessageAsync(FetchMessageRequest request)
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}", Method.Get);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}", Method.Get);
             requestObject.AddUrlSegment("domain", request.Domain);
-            requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
 
             var response = await httpClient.ExecuteAsync<FetchMessageResponse>(requestObject);
@@ -73,27 +97,42 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         }
 
         /// <summary>
-        /// This endpoint retrieves a list of attachments for a message. Note attachments are expected to be in Email format.
+        /// This endpoint retrieves a list of attachments for a message for specific inbox. Note attachments are expected to be in Email format.
         /// </summary>
-        /// <param name="request">FetchAttachmentsRequest object.</param>
+        /// <param name="request">FetchInboxMessageAttachmentsRequest object.</param>
         /// <returns></returns>
-        public async Task<FetchAttachmentsResponse> FetchAttachmentsAsync(FetchAttachmentsRequest request)
+        public async Task<FetchInboxMessageAttachmentsResponse> FetchInboxMessageAttachmentsAsync(FetchInboxMessageAttachmentsRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}/attachments", Method.Get);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
 
-            var response = await httpClient.ExecuteAsync<FetchAttachmentsResponse>(requestObject);
+            var response = await httpClient.ExecuteAsync<FetchInboxMessageAttachmentsResponse>(requestObject);
             return response;
         }
 
         /// <summary>
-        /// This endpoint retrieves attachment for a message. Note attachment is expected to be in Email format.
+        /// This endpoint retrieves a list of attachments for a message. Note attachments are expected to be in Email format.
         /// </summary>
-        /// <param name="request">FetchAttachmentRequest object.</param>
+        /// <param name="request">FetchMessageAttachmentsRequest object.</param>
         /// <returns></returns>
-        public async Task<FetchAttachmentResponse> FetchAttachmentAsync(FetchAttachmentRequest request)
+        public async Task<FetchMessageAttachmentsResponse> FetchMessageAttachmentsAsync(FetchMessageAttachmentsRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/attachments", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<FetchMessageAttachmentsResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// This endpoint retrieves attachment for a message for specific inbox. Note attachment is expected to be in Email format.
+        /// </summary>
+        /// <param name="request">FetchInboxMessageAttachmentRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchInboxMessageAttachmentResponse> FetchInboxMessageAttachmentAsync(FetchInboxMessageAttachmentRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}/attachments/{attachmentId}", Method.Get);
             requestObject.AddUrlSegment("domain", request.Domain);
@@ -101,9 +140,9 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             requestObject.AddUrlSegment("messageId", request.MessageId);
             requestObject.AddUrlSegment("attachmentId", request.AttachmentId);
 
-            var response = await httpClient.ExecuteAsync<FetchAttachmentResponse>(requestObject, (restResponse) => 
+            var response = await httpClient.ExecuteAsync<FetchInboxMessageAttachmentResponse>(requestObject, (restResponse) => 
             {
-                return new FetchAttachmentResponse 
+                return new FetchInboxMessageAttachmentResponse
                 { 
                     Bytes = restResponse.RawBytes, 
                     Content = restResponse.Content,
@@ -114,6 +153,30 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             return response;
         }
 
+        /// <summary>
+        /// This endpoint retrieves attachment for a message. Note attachment is expected to be in Email format.
+        /// </summary>
+        /// <param name="request">FetchMessageAttachmentRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchMessageAttachmentResponse> FetchMessageAttachmentAsync(FetchMessageAttachmentRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/attachments/{attachmentId}", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+            requestObject.AddUrlSegment("attachmentId", request.AttachmentId);
+
+            var response = await httpClient.ExecuteAsync<FetchMessageAttachmentResponse>(requestObject, (restResponse) =>
+            {
+                return new FetchMessageAttachmentResponse
+                {
+                    Bytes = restResponse.RawBytes,
+                    Content = restResponse.Content,
+                    ContentType = restResponse.ContentType
+                };
+            });
+
+            return response;
+        }
 
         /// <summary>
         /// This endpoint retrieves all the links parsed from the email.
@@ -122,12 +185,27 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// <returns></returns>
         public async Task<FetchMessageLinksResponse> FetchMessageLinksAsync(FetchMessageLinksRequest request)
         {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/links", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<FetchMessageLinksResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// This endpoint retrieves all the links parsed from the email for specific inbox.
+        /// </summary>
+        /// <param name="request">FetchInboxMessageLinksRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchInboxMessageLinksResponse> FetchInboxMessageLinksAsync(FetchInboxMessageLinksRequest request)
+        {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}/links", Method.Get);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
 
-            var response = await httpClient.ExecuteAsync<FetchMessageLinksResponse>(requestObject);
+            var response = await httpClient.ExecuteAsync<FetchInboxMessageLinksResponse>(requestObject);
             return response;
         }
 
@@ -185,9 +263,9 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// they must follow a general email format with the fields of From, 
         /// Subject, and Parts(see "Fetch Message" above).
         /// </summary>
-        /// <param name="request">InjectMessageRequest object.</param>
+        /// <param name="request">PostMessageRequest object.</param>
         /// <returns></returns>
-        public async Task<InjectMessageResponse> InjectMessageAsync(InjectMessageRequest request)
+        public async Task<PostMessageResponse> PostMessageAsync(PostMessageRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages", Method.Post);
             requestObject.AddUrlSegment("domain", request.Domain);
@@ -195,7 +273,114 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             
             requestObject.AddJsonBody(request.Message);
 
-            var response = await httpClient.ExecuteAsync<InjectMessageResponse>(requestObject);
+            var response = await httpClient.ExecuteAsync<PostMessageResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// This endpoint retrieves smtp log from the email.
+        /// </summary>
+        /// <param name="request">FetchMessageSmtpLogRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchMessageSmtpLogResponse> FetchMessageSmtpLogAsync(FetchMessageSmtpLogRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/smtplog", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<FetchMessageSmtpLogResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// This endpoint retrieves smtp log from the email for specific inbox.
+        /// </summary>
+        /// <param name="request">FetchInboxMessageSmtpLogRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchInboxMessageSmtpLogResponse> FetchInboxMessageSmtpLogAsync(FetchInboxMessageSmtpLogRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}/smtplog", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("inbox", request.Inbox);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<FetchInboxMessageSmtpLogResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// This endpoint retrieves raw info from the email.
+        /// </summary>
+        /// <param name="request">FetchMessageRawRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchMessageRawResponse> FetchMessageRawAsync(FetchMessageRawRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/raw", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<FetchMessageRawResponse>(requestObject, (restResponse) =>
+            {
+                return new FetchMessageRawResponse
+                {
+                    RawData = restResponse.Content
+                };
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// This endpoint retrieves raw info from the email for specific inbox.
+        /// </summary>
+        /// <param name="request">FetchInboxMessageRawRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchInboxMessageRawResponse> FetchInboxMessageRawAsync(FetchInboxMessageRawRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/{messageId}/raw", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("inbox", request.Inbox);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<FetchInboxMessageRawResponse>(requestObject, (restResponse) =>
+            {
+                return new FetchInboxMessageRawResponse
+                {
+                    RawData = restResponse.Content
+                };
+            });
+
+            return response;
+        }
+
+        /// <summary>
+        /// That fetches the latest 5 FULL messages.
+        /// </summary>
+        /// <param name="request">FetchLatestMessagesResponse object.</param>
+        /// <returns></returns>
+        public async Task<FetchLatestMessagesResponse> FetchLatestMessagesAsync(FetchLatestMessagesRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/*", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+
+            var response = await httpClient.ExecuteAsync<FetchLatestMessagesResponse>(requestObject);
+
+            return response;
+        }
+
+        /// <summary>
+        /// That fetches the latest 5 FULL messages for specific inbox.
+        /// </summary>
+        /// <param name="request">FetchLatestInboxMessagesResponse object.</param>
+        /// <returns></returns>
+        public async Task<FetchLatestInboxMessagesResponse> FetchLatestInboxMessagesAsync(FetchLatestInboxMessagesRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/*", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("inbox", request.Inbox);
+
+            var response = await httpClient.ExecuteAsync<FetchLatestInboxMessagesResponse>(requestObject);
+
             return response;
         }
     }

@@ -8,23 +8,23 @@
     <RepositoryUrl>https://github.com/manybrain/mailinator-csharp-client</RepositoryUrl>
     <Description>Client Library used to interact with the Mailinator API</Description>
     <PackageProjectUrl></PackageProjectUrl>
-    <Copyright>© Manybrain 2020</Copyright>
+    <Copyright>© Manybrain 2024</Copyright>
     <Authors>Marian Melnychuk</Authors>
     <PackageTags>Manybrain; ApiClient</PackageTags>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
     <Product>MailinatorApiClient</Product>
-    <Version>1.0.3</Version>
-    <AssemblyVersion>1.0.3</AssemblyVersion>
-    <FileVersion>1.0.3</FileVersion>
+    <Version>1.0.4</Version>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
-	<None Include="..\README.md" Pack="true" PackagePath="\"/>
+	<None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

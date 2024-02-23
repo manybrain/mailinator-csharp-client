@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace mailinator_csharp_client.Models.Messages.Requests
 {
-    public class InjectMessageRequest
+    public class PostMessageRequest
     {
         /// <summary>
         /// private - Inject to any (i.e. first) private domain

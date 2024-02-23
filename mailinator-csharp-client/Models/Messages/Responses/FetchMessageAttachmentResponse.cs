@@ -1,7 +1,7 @@
 ﻿
 namespace mailinator_csharp_client.Models.Responses
 {
-    public class FetchAttachmentResponse
+    public class FetchMessageAttachmentResponse
     {
         public byte[] Bytes { get; set; }
 

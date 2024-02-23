@@ -20,7 +20,7 @@ namespace mailinator_csharp_client.Models.Messages.Requests
         /// [inbox_name*] - Fetch All Messages summaries for a given Inbox Prefix
         /// </summary>
         [JsonProperty("inbox")]
-        public string Inbox { get; set; } = "*";
+        public string Inbox { get; set; } = "null";
 
         /// <summary>
         /// Skip this many emails in your Private Domain. Default Value 0. Required - no

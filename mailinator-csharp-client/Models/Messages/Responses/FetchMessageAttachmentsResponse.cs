@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace mailinator_csharp_client.Models.Responses
 {
-    public class FetchAttachmentsResponse
+    public class FetchMessageAttachmentsResponse
     {
         [JsonProperty("attachments")]
         public Attachments Attachments;
