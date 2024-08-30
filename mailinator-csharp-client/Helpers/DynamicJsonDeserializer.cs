@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers;
+using System;
 
 namespace mailinator_csharp_client.Helpers
 {
@@ -12,7 +13,8 @@ namespace mailinator_csharp_client.Helpers
 
         public string[] AcceptedContentTypes => ContentType.JsonAccept;
 
-        public SupportsContentType SupportsContentType => (contentType) => contentType == ContentType.Json ? true : false;
+        public SupportsContentType SupportsContentType => (contentType) => !string.IsNullOrWhiteSpace(contentType) && 
+            contentType.Value.EndsWith("json", StringComparison.InvariantCultureIgnoreCase);
 
         public DataFormat DataFormat { get; } = DataFormat.Json;
 

@@ -1,4 +1,5 @@
 ﻿using mailinator_csharp_client.Helpers;
+using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Reflection;
@@ -15,7 +16,7 @@ namespace mailinator_csharp_client.Clients.HttpClient
         {
             var options = new RestClientOptions(baseUri)
             {
-                MaxTimeout = TIMEOUT_MS
+                Timeout = TimeSpan.FromMilliseconds(TIMEOUT_MS)
             };
 
             restClient = new RestClient(options, configureSerialization: s => s.UseSerializer(() => new DynamicJsonSerializer()));
