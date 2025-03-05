@@ -1,4 +1,5 @@
 ﻿using mailinator_csharp_client.Clients.HttpClient;
+using mailinator_csharp_client.Helpers;
 using mailinator_csharp_client.Models.Webhooks.Requests;
 using mailinator_csharp_client.Models.Webhooks.Responses;
 using RestSharp;
@@ -25,76 +26,6 @@ namespace mailinator_csharp_client.Clients.ApiClients.Webhooks
         }
 
         /// <summary>
-        /// This command will deliver the message to the :to inbox that was set into request object
-        /// </summary>
-        /// <param name="request">PublicWebhookRequest object.</param>
-        /// <returns></returns>
-        public async Task<PublicWebhookResponse> PublicWebhookAsync(PublicWebhookRequest request)
-        {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/public/webhook", Method.Post);
-            
-            requestObject.AddJsonBody(request.Webhook);
-
-            var response = await httpClient.ExecuteAsync<PublicWebhookResponse>(requestObject);
-            return response;
-        }
-
-        /// <summary>
-        /// This command will deliver the message to the :inbox inbox
-        /// Note that if the Mailinator system cannot determine the destination inbox via the URL or a "to" field in the payload, the message will be rejected.
-        /// If the message contains a "from" and "subject" field, these will be visible on the inbox page.
-        /// </summary>
-        /// <param name="request">PublicInboxWebhookRequest object.</param>
-        /// <returns></returns>
-        public async Task<PublicWebhookResponse> PublicInboxWebhookAsync(PublicInboxWebhookRequest request)
-        {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/public/webhook/{inbox}", Method.Post);
-
-            requestObject.AddUrlSegment("inbox", request.Inbox);
-
-            requestObject.AddJsonBody(request.Webhook);
-
-            var response = await httpClient.ExecuteAsync<PublicWebhookResponse>(requestObject);
-            return response;
-        }
-
-        /// <summary>
-        /// If you have a Twilio account which receives incoming SMS messages. You may direct those messages through this facility to inject those messages into the Mailinator system.
-        /// </summary>
-        /// <param name="request">PublicCustomServiceWebhookRequest object.</param>
-        /// <returns></returns>
-        public async Task<PublicCustomServiceWebhookResponse> PublicCustomServiceWebhookAsync(PublicCustomServiceWebhookRequest request)
-        {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/public/{customService}", Method.Post);
-
-            requestObject.AddUrlSegment("customService", request.CustomService);
-
-            requestObject.AddJsonBody(request.Webhook);
-
-            var response = await httpClient.ExecuteAsync<PublicCustomServiceWebhookResponse>(requestObject);
-            return response;
-        }
-
-        /// <summary>
-        /// The SMS message will arrive in the Public Mailinator inbox corresponding to the Twilio Phone Number. (only the digits, if a plus sign precedes the number it will be removed) 
-        /// If you wish the message to arrive in a different inbox, you may append the destination inbox to the URL.
-        /// </summary>
-        /// <param name="request">PublicCustomServiceInboxWebhookRequest object.</param>
-        /// <returns></returns>
-        public async Task<PublicCustomServiceWebhookResponse> PublicCustomServiceInboxWebhookAsync(PublicCustomServiceInboxWebhookRequest request)
-        {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/public/{customService}/{inbox}", Method.Post);
-
-            requestObject.AddUrlSegment("customService", request.CustomService);
-            requestObject.AddUrlSegment("inbox", request.Inbox);
-
-            requestObject.AddJsonBody(request.Webhook);
-
-            var response = await httpClient.ExecuteAsync<PublicCustomServiceWebhookResponse>(requestObject);
-            return response;
-        }
-
-        /// <summary>
         /// This command will Webhook messages into your Private Domain
         /// The incoming Webhook will arrive in the inbox designated by the "to" field in the incoming request payload.
         /// Webhooks into your Private System do NOT use your regular API Token.
@@ -105,9 +36,9 @@ namespace mailinator_csharp_client.Clients.ApiClients.Webhooks
         /// <returns></returns>
         public async Task<PrivateWebhookResponse> PrivateWebhookAsync(PrivateWebhookRequest request)
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/{wh-token}/webhook", Method.Post);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/private/webhook", Method.Post);
 
-            requestObject.AddUrlSegment("wh-token", request.WebhookToken);
+            requestObject.AddSafeQueryParameter("whtoken", request.WebhookToken);
 
             requestObject.AddJsonBody(request.Webhook);
 
@@ -126,9 +57,9 @@ namespace mailinator_csharp_client.Clients.ApiClients.Webhooks
         /// <returns></returns>
         public async Task<PrivateWebhookResponse> PrivateInboxWebhookAsync(PrivateInboxWebhookRequest request)
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/{wh-token}/webhook/{inbox}", Method.Post);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/private/webhook/{inbox}", Method.Post);
 
-            requestObject.AddUrlSegment("wh-token", request.WebhookToken);
+            requestObject.AddSafeQueryParameter("whtoken", request.WebhookToken);
             requestObject.AddUrlSegment("inbox", request.Inbox);
 
             requestObject.AddJsonBody(request.Webhook);
@@ -146,9 +77,9 @@ namespace mailinator_csharp_client.Clients.ApiClients.Webhooks
         /// <returns></returns>
         public async Task<PrivateCustomServiceWebhookResponse> PrivateCustomServiceWebhookAsync(PrivateCustomServiceWebhookRequest request)
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/{wh-token}/{customService}", Method.Post);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/private/{customService}", Method.Post);
 
-            requestObject.AddUrlSegment("wh-token", request.WebhookToken);
+            requestObject.AddSafeQueryParameter("whtoken", request.WebhookToken);
             requestObject.AddUrlSegment("customService", request.CustomService);
 
             requestObject.AddJsonBody(request.Webhook);
@@ -165,9 +96,9 @@ namespace mailinator_csharp_client.Clients.ApiClients.Webhooks
         /// <returns></returns>
         public async Task<PrivateCustomServiceWebhookResponse> PrivateCustomServiceInboxWebhookAsync(PrivateCustomServiceInboxWebhookRequest request)
         {
-            var requestObject = httpClient.GetRequest(endpointUrl + "/{wh-token}/{customService}/{inbox}", Method.Post);
+            var requestObject = httpClient.GetRequest(endpointUrl + "/private/{customService}/{inbox}", Method.Post);
 
-            requestObject.AddUrlSegment("wh-token", request.WebhookToken);
+            requestObject.AddSafeQueryParameter("whtoken", request.WebhookToken);
             requestObject.AddUrlSegment("customService", request.CustomService);
             requestObject.AddUrlSegment("inbox", request.Inbox);
 

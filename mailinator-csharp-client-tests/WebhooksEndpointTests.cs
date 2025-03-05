@@ -10,40 +10,6 @@ namespace mailinator_csharp_client_tests
     {
         private readonly Webhook WebhookToAdd = new Webhook { From = "MyMailinatorCSharpTest", Subject = "testing message", Text = "hello world", To = "jack" };
 
-        [TestMethod, TestCategory("Webhooks.PublicWebhookAsync")]
-        public async Task PublicWebhookAsync()
-        {
-            var request = new PublicWebhookRequest() { Webhook = WebhookToAdd };
-            var response = await mailinatorClient.WebhooksClient.PublicWebhookAsync(request);
-            Assert.IsTrue(response != null);
-            Assert.IsTrue(response.Status == "ok");
-        }
-
-        [TestMethod, TestCategory("Webhooks.PublicInboxWebhookAsync")]
-        public async Task PublicInboxWebhookAsync()
-        {
-            var request = new PublicInboxWebhookRequest() { Inbox = WebhookInbox, Webhook = WebhookToAdd };
-            var response = await mailinatorClient.WebhooksClient.PublicInboxWebhookAsync(request);
-            Assert.IsTrue(response != null);
-            Assert.IsTrue(response.Status == "ok");
-        }
-
-        [TestMethod, TestCategory("Webhooks.PublicCustomServiceWebhookAsync")]
-        public async Task PublicCustomServiceWebhookAsync()
-        {
-            var request = new PublicCustomServiceWebhookRequest() { CustomService = WebhookCustomService, Webhook = WebhookToAdd };
-            var response = await mailinatorClient.WebhooksClient.PublicCustomServiceWebhookAsync(request);
-            //Assert.IsTrue(response != null);
-        }
-
-        [TestMethod, TestCategory("Webhooks.PublicCustomServiceInboxWebhookAsync")]
-        public async Task PublicCustomServiceInboxWebhookAsync()
-        {
-            var request = new PublicCustomServiceInboxWebhookRequest() { CustomService = WebhookCustomService, Inbox = WebhookInbox, Webhook = WebhookToAdd };
-            var response = await mailinatorClient.WebhooksClient.PublicCustomServiceInboxWebhookAsync(request);
-            //Assert.IsTrue(response != null);
-        }
-
         [TestMethod, TestCategory("Webhooks.PrivateWebhookAsync")]
         public async Task PrivateWebhookAsync()
         {

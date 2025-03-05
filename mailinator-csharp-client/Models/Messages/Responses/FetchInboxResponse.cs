@@ -12,5 +12,7 @@ namespace mailinator_csharp_client.Models.Responses
         public string To;
         [JsonProperty("msgs")]
         public List<Message> Messages;
+        [JsonProperty("cursor")]
+        public string Cursor;
     }
 }

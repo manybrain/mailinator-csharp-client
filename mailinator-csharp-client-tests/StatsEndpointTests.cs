@@ -19,5 +19,12 @@ namespace mailinator_csharp_client_tests
             var response = await mailinatorClient.StatsClient.GetTeamAsync();
             Assert.IsTrue(response != null);
         }
+
+        [TestMethod, TestCategory("Stats.GetTeamInfoAsync")]
+        public async Task GetTeamInfoAsync()
+        {
+            var response = await mailinatorClient.StatsClient.GetTeamInfoAsync();
+            Assert.IsTrue(response != null);
+        }
     }
 }
