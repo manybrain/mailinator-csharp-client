@@ -17,5 +17,11 @@ namespace mailinator_csharp_client.Models.Messages.Requests
         /// </summary>
         [JsonProperty("message_id")]
         public string MessageId { get; set; }
+
+        /// <summary>
+        /// Auto-delete message after retrieval (e.g., "10s" = 10 seconds, "5m" = 5 minutes). Required - no
+        /// </summary>
+        [JsonProperty("delete")]
+        public string Delete { get; set; }
     }
 }

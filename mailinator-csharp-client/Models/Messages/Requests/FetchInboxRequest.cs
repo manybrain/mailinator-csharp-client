@@ -45,5 +45,29 @@ namespace mailinator_csharp_client.Models.Messages.Requests
         /// </summary>
         [JsonProperty("decode_subject")]
         public bool DecodeSubject { get; set; } = false;
+
+        /// <summary>
+        /// Pagination cursor for large result sets (obtained from previous response). Required - no
+        /// </summary>
+        [JsonProperty("cursor")]
+        public string Cursor { get; set; }
+
+        /// <summary>
+        /// Return full email content with body/attachments (true) or just metadata (false). Default: false. Required - no
+        /// </summary>
+        [JsonProperty("full")]
+        public bool? Full { get; set; }
+
+        /// <summary>
+        /// Auto-delete message after retrieval (e.g., "10s" = 10 seconds, "5m" = 5 minutes). Required - no
+        /// </summary>
+        [JsonProperty("delete")]
+        public string Delete { get; set; }
+
+        /// <summary>
+        /// Maximum time to wait for new messages (e.g., "30s" = 30 seconds). Required - no
+        /// </summary>
+        [JsonProperty("wait")]
+        public string Wait { get; set; }
     }
 }

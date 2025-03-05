@@ -35,7 +35,7 @@ namespace mailinator_csharp_client
             DomainsClient = new DomainsClient(httpClient, "domains");
             MessagesClient = new MessagesClient(httpClient, "domains");
             RulesClient = new RulesClient(httpClient, "domains");
-            StatsClient = new StatsClient(httpClient, "team");
+            StatsClient = new StatsClient(httpClient, string.Empty);
             AuthenticatorsClient = new AuthenticatorsClient(httpClient, string.Empty);
         }
 

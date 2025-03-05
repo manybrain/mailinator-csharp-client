@@ -45,7 +45,11 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             requestObject.AddSafeQueryParameter("limit", request.Limit.ToString());
             requestObject.AddSafeQueryParameter("sort", request.Sort.ToString());
             requestObject.AddSafeQueryParameter("decode_subject", request.DecodeSubject.ToString());
-            
+            requestObject.AddSafeQueryParameter("cursor", request.Cursor?.ToString());
+            requestObject.AddSafeQueryParameter("full", request.Full?.ToString());
+            requestObject.AddSafeQueryParameter("delete", request.Delete?.ToString());
+            requestObject.AddSafeQueryParameter("wait", request.Wait?.ToString());
+
             var response = await httpClient.ExecuteAsync<FetchInboxResponse>(requestObject);
             return response;
         }
@@ -76,6 +80,8 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}", Method.Get);
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            requestObject.AddSafeQueryParameter("delete", request.Delete?.ToString());
 
             var response = await httpClient.ExecuteAsync<FetchMessageResponse>(requestObject);
             return response;
@@ -206,6 +212,21 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             requestObject.AddUrlSegment("messageId", request.MessageId);
 
             var response = await httpClient.ExecuteAsync<FetchInboxMessageLinksResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// This endpoint retrieves all the links info parsed from the email.
+        /// </summary>
+        /// <param name="request">FetchMessageLinksRequest object.</param>
+        /// <returns></returns>
+        public async Task<FetchMessageLinksFullResponse> FetchMessageLinksFullAsync(FetchMessageLinksFullRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/linksfull", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<FetchMessageLinksFullResponse>(requestObject);
             return response;
         }
 

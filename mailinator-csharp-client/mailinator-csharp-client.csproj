@@ -8,16 +8,16 @@
     <RepositoryUrl>https://github.com/manybrain/mailinator-csharp-client</RepositoryUrl>
     <Description>Client Library used to interact with the Mailinator API</Description>
     <PackageProjectUrl></PackageProjectUrl>
-    <Copyright>© Manybrain 2024</Copyright>
+    <Copyright>© Manybrain 2025</Copyright>
     <Authors>Marian Melnychuk</Authors>
     <PackageTags>Manybrain; ApiClient</PackageTags>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
     <Product>MailinatorApiClient</Product>
-    <Version>1.0.5</Version>
-    <AssemblyVersion>1.0.5</AssemblyVersion>
-    <FileVersion>1.0.5</FileVersion>
+    <Version>1.0.6</Version>
+    <AssemblyVersion>1.0.6</AssemblyVersion>
+    <FileVersion>1.0.6</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 

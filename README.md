@@ -230,6 +230,10 @@ Then you can configure the library with:
     //Fetch Message Links
     FetchMessageLinksRequest fetchMessageLinksRequest = new FetchMessageLinksRequest() { Domain = "yourDomainNameHere", Inbox = "yourInboxHere", MessageId = "yourMessageIdWithAttachmentHere" };
     FetchMessageLinksResponse fetchMessageLinksResponse = await mailinatorClient.MessagesClient.FetchMessageLinksAsync(fetchMessageLinksRequest);
+
+    //Fetch Message Links Full
+    FetchMessageLinksFullRequest fetchMessageLinksFullRequest = new FetchMessageLinksFullRequest() { Domain = "yourDomainNameHere", MessageId = "yourMessageIdWithAttachmentHere" };
+    FetchMessageLinksFullResponse fetchMessageLinksFullResponse = await mailinatorClient.MessagesClient.FetchMessageLinksFullAsync(fetchMessageLinksFullRequest);
 	
 	//Fetch Message Smtp Log
 	FetchMessageSmtpLogRequest fetchMessageSmtpLogRequest = new FetchMessageSmtpLogRequest() { Domain = "yourDomainNameHere", MessageId = "yourMessageIdHere" };
@@ -268,7 +272,7 @@ Then you can configure the library with:
   
 ##### Stats methods:
 
-- Get Team / Team Stats:
+- Get Team / Team Stats / Team Info:
 
   ```csharp
     using mailinator_csharp_client;
@@ -282,38 +286,14 @@ Then you can configure the library with:
 	
     //Get TeamStats
     GetTeamStatsResponse getTeamStatsResponse = await mailinatorClient.StatsClient.GetTeamStatsAsync();
+
+    //Get TeamInfo
+    GetTeamInfoResponse getTeamInfoResponse = await mailinatorClient.StatsClient.GetTeamInfoAsync();
+
     // ...
   ```
 
 ##### Webhooks methods:
-
-- Public Webhook / Public Inbox Webhook / Public Custom Service Webhook / Public Custom Service Inbox Webhook:
-
-  ```csharp
-    using mailinator_csharp_client;
-    using mailinator_csharp_client.Models.Domains.Requests;
-    using mailinator_csharp_client.Models.Domains.Responses;
-
-    MailinatorClient mailinatorClient = new MailinatorClient("yourApiTokenHere");
-    Webhook webhookToAdd = new Webhook { From = "MyMailinatorCSharpTest", Subject = "testing message", Text = "hello world", To = "jack" };
-
-    //Public Webhook
-    PublicWebhookRequest publicWebhookRequest = new PublicWebhookRequest() { Webhook = webhookToAdd };
-	PublicWebhookResponse publicWebhookResponse = await mailinatorClient.WebhooksClient.PublicWebhookAsync(publicWebhookRequest);
-	
-    //Public Inbox Webhook
-    PublicInboxWebhookRequest publicInboxWebhookRequest = new PublicInboxWebhookRequest() { Inbox = "yourWebhookInbox", Webhook = webhookToAdd };
-	PublicWebhookResponse publicInboxWebhookResponse = await mailinatorClient.WebhooksClient.PublicInboxWebhookAsync(publicInboxWebhookRequest);
-	
-	//Public Custom Service Webhook
-    PublicCustomServiceWebhookRequest publicCustomServiceWebhookRequest = new PublicCustomServiceWebhookRequest() { CustomService = "yourWebhookCustomService", Webhook = webhookToAdd };
-	PublicCustomServiceWebhookResponse publicCustomServiceWebhookResponse = await mailinatorClient.WebhooksClient.PublicCustomServiceWebhookAsync(publicCustomServiceWebhookRequest );
-	
-	//Public Custom Service Inbox Webhook
-	PublicCustomServiceInboxWebhookRequest publicCustomServiceInboxWebhookRequest = new PublicCustomServiceInboxWebhookRequest() { CustomService = "yourWebhookCustomService", Inbox = "yourWebhookInbox", Webhook = webhookToAdd };
-	PublicCustomServiceWebhookResponse publicCustomServiceInboxWebhookResponse = await mailinatorClient.WebhooksClient.PublicCustomServiceInboxWebhookAsync(publicCustomServiceInboxWebhookRequest);
-    // ...
-  ```
   
 - Private Webhook / Private Inbox Webhook / Private Custom Service Webhook / Private Custom Service Inbox Webhook:
 

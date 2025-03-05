@@ -4,6 +4,7 @@ using mailinator_csharp_client.Models.Messages.Entities;
 using mailinator_csharp_client.Models.Messages.Requests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace mailinator_csharp_client_tests
@@ -64,6 +65,42 @@ namespace mailinator_csharp_client_tests
             Assert.IsTrue(response != null);
         }
 
+        [TestMethod, TestCategory("Messages.FetchInboxWithPrivateDomainWithCursorQueryParamsAsync")]
+        public async Task FetchInboxWithPrivateDomainWithCursorQueryParamsAsync()
+        {
+            var request1 = new FetchInboxRequest() { Domain = PrivateDomain, Inbox = "*", Limit = 1 };
+            var response1 = await mailinatorClient.MessagesClient.FetchInboxAsync(request1);
+            Assert.IsTrue(response1 != null);
+
+            var request2 = new FetchInboxRequest() { Domain = PrivateDomain, Inbox = "*", Cursor = response1.Cursor, Limit = 1, DecodeSubject = true };
+            var response2 = await mailinatorClient.MessagesClient.FetchInboxAsync(request2);
+            Assert.IsTrue(response2 != null);
+        }
+
+        [TestMethod, TestCategory("Messages.FetchInboxWithPrivateDomainWithFullQueryParamsAsync")]
+        public async Task FetchInboxWithPrivateDomainWithFullQueryParamsAsync()
+        {
+            var request = new FetchInboxRequest() { Domain = PrivateDomain, Inbox = "*", Full = true, Limit = 1, DecodeSubject = true };
+            var response = await mailinatorClient.MessagesClient.FetchInboxAsync(request);
+            Assert.IsTrue(response != null);
+        }
+
+        [TestMethod, TestCategory("Messages.FetchInboxWithPrivateDomainWithDeleteQueryParamsAsync")]
+        public async Task FetchInboxWithPrivateDomainWithDeleteQueryParamsAsync()
+        {
+            var request = new FetchInboxRequest() { Domain = PrivateDomain, Inbox = "*", Delete = "30s", Limit = 1, DecodeSubject = true };
+            var response = await mailinatorClient.MessagesClient.FetchInboxAsync(request);
+            Assert.IsTrue(response != null);
+        }
+
+        [TestMethod, TestCategory("Messages.FetchInboxWithPrivateDomainWithWaitQueryParamsAsync")]
+        public async Task FetchInboxWithPrivateDomainWithWaitQueryParamsAsync()
+        {
+            var request = new FetchInboxRequest() { Domain = PrivateDomain, Inbox = "*", Wait = "30s", Limit = 1, DecodeSubject = true };
+            var response = await mailinatorClient.MessagesClient.FetchInboxAsync(request);
+            Assert.IsTrue(response != null);
+        }
+
         [TestMethod, TestCategory("Messages.FetchMessageAsync")]
         public async Task FetchMessageAsync()
         {
@@ -76,6 +113,26 @@ namespace mailinator_csharp_client_tests
             Assert.IsTrue(response != null);
 
             await mailinatorClient.MessagesClient.DeleteMessageAsync(new DeleteMessageRequest() { Domain = domain, Inbox = inbox, MessageId = message?.Id });
+        }
+
+
+        [TestMethod, TestCategory("Messages.FetchMessageWithDeleteQueueParamsAsync")]
+        public async Task FetchMessageWithDeleteQueueParamsAsync()
+        {
+            var domain = PrivateDomain;
+            var inbox = PrivateInbox;
+            var message = await PostNewMessageAsync(domain, inbox);
+
+            var request = new FetchMessageRequest() { Domain = domain, MessageId = message?.Id, Delete = "30s" };
+            var response = await mailinatorClient.MessagesClient.FetchMessageAsync(request);
+            Assert.IsTrue(response != null);
+
+            Thread.Sleep(45 * 1000);
+
+            var exception = await Assert.ThrowsExceptionAsync<ApiException>(async () =>
+            {
+                await mailinatorClient.MessagesClient.FetchMessageAsync(request);
+            });
         }
 
         [TestMethod, TestCategory("Messages.FetchMessageWhenMessageDoesNotExistAsync")]
@@ -206,6 +263,21 @@ namespace mailinator_csharp_client_tests
 
             var request = new FetchInboxMessageLinksRequest() { Domain = domain, Inbox = inbox, MessageId = message?.Id };
             var response = await mailinatorClient.MessagesClient.FetchInboxMessageLinksAsync(request);
+            Assert.IsTrue(response != null);
+
+            await mailinatorClient.MessagesClient.DeleteMessageAsync(new DeleteMessageRequest() { Domain = domain, Inbox = inbox, MessageId = message?.Id });
+        }
+
+
+        [TestMethod, TestCategory("Messages.FetchMessageLinksFullAsync")]
+        public async Task FetchMessageLinksFullAsync()
+        {
+            var domain = PrivateDomain;
+            var inbox = PrivateInbox;
+            var message = await PostNewMessageAsync(domain, inbox);
+
+            var request = new FetchMessageLinksFullRequest() { Domain = domain, MessageId = message?.Id };
+            var response = await mailinatorClient.MessagesClient.FetchMessageLinksFullAsync(request);
             Assert.IsTrue(response != null);
 
             await mailinatorClient.MessagesClient.DeleteMessageAsync(new DeleteMessageRequest() { Domain = domain, Inbox = inbox, MessageId = message?.Id });
