@@ -3,6 +3,7 @@ using mailinator_csharp_client.Helpers;
 using mailinator_csharp_client.Models.Rules.Requests;
 using mailinator_csharp_client.Models.Rules.Responses;
 using RestSharp;
+using System;
 using System.Threading.Tasks;
 
 namespace mailinator_csharp_client.Clients.ApiClients.Rules
@@ -30,6 +31,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// </summary>
         /// <param name="request">CreateRuleRequest object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Rules endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<CreateRuleResponse> CreateRuleAsync(CreateRuleRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules", Method.Post);
@@ -46,6 +48,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// </summary>
         /// <param name="request">EnableRuleRequest object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Rules endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<EnableRuleResponse> EnableRuleAsync(EnableRuleRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules/{ruleId}/enable", Method.Put);
@@ -61,6 +64,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// </summary>
         /// <param name="request">DisableRuleRequest object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Rules endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<DisableRuleResponse> DisableRuleAsync(DisableRuleRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules/{ruleId}/disable", Method.Put);
@@ -76,6 +80,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// </summary>
         /// <param name="request">GetAllRulesRequest object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Rules endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<GetAllRulesResponse> GetAllRulesAsync(GetAllRulesRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules", Method.Get);
@@ -90,6 +95,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// </summary>
         /// <param name="request">GetRuleRequest object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Rules endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<GetRuleResponse> GetRuleAsync(GetRuleRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules/{ruleId}", Method.Get);
@@ -105,6 +111,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Rules
         /// </summary>
         /// <param name="request">DeleteRuleRequest object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Rules endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<DeleteRuleResponse> DeleteRuleAsync(DeleteRuleRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}/rules/{ruleId}", Method.Delete);
