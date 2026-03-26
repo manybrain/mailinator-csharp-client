@@ -6,6 +6,8 @@ The format is based on *Keep a Changelog* and this project aims to follow *Seman
 
 ## [Unreleased]
 
+## [1.0.7] -
+
 ### Added
 
 - `ROADMAP.md`
