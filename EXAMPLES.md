@@ -141,19 +141,9 @@ var deleted = await client.RulesClient.DeleteRuleAsync(
 
 Enable + disable a rule:
 
-```csharp
-using mailinator_csharp_client;
-using mailinator_csharp_client.Models.Rules.Requests;
-
-var client = new MailinatorClient("yourApiTokenHere");
-
-var enabled = await client.RulesClient.EnableRuleAsync(
-    new EnableRuleRequest { DomainId = "yourDomainIdHere", RuleId = "yourRuleIdHere" });
-
-var disabled = await client.RulesClient.DisableRuleAsync(
-    new DisableRuleRequest { DomainId = "yourDomainIdHere", RuleId = "yourRuleIdHere" });
-```
-
+> **Deprecated:** `EnableRuleAsync` and `DisableRuleAsync` are obsolete in this release.
+> This example has been removed so new integrations do not adopt endpoints planned for removal.
+> For new code, use the currently supported Rules API operations instead.
 List rules + fetch a rule:
 
 ```csharp
