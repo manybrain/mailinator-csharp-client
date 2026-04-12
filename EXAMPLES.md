@@ -128,9 +128,13 @@ var rule = new RuleToCreate
     }
 };
 
+// DEPRECATED: RulesClient.CreateRuleAsync is obsolete in this release.
+// Prefer the current replacement API from the SDK documentation for new code.
 var created = await client.RulesClient.CreateRuleAsync(
     new CreateRuleRequest { DomainId = "yourDomainIdHere", Rule = rule });
 
+// DEPRECATED: RulesClient.DeleteRuleAsync is obsolete in this release.
+// Prefer the current replacement API from the SDK documentation for new code.
 var deleted = await client.RulesClient.DeleteRuleAsync(
     new DeleteRuleRequest { DomainId = "yourDomainIdHere", RuleId = "yourRuleIdHere" });
 ```
