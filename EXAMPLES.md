@@ -78,6 +78,9 @@ var domain = await client.DomainsClient.GetDomainAsync(
 
 Create + delete a domain:
 
+> **Deprecated:** `CreateDomainAsync` and `DeleteDomainAsync` are obsolete in this release.
+> For new code, use the currently supported Domains API operations instead.
+
 ```csharp
 using System;
 using mailinator_csharp_client;
