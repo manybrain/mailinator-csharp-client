@@ -232,6 +232,8 @@ var smtp = await client.MessagesClient.FetchMessageSmtpLogAsync(
 var raw = await client.MessagesClient.FetchMessageRawAsync(
     new FetchMessageRawRequest { Domain = "yourDomainNameHere", MessageId = "yourMessageIdHere" });
 
+// DEPRECATED: MessagesClient.FetchLatestMessagesAsync is obsolete in this release.
+// Prefer non-"latest" message retrieval operations for new code.
 var latest = await client.MessagesClient.FetchLatestMessagesAsync(
     new FetchLatestMessagesRequest { Domain = "yourDomainNameHere" });
 ```
