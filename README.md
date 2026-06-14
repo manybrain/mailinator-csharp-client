@@ -14,7 +14,7 @@ To start using the API you need to first create an account at [mailinator.com](h
 
 Once you have an account you will need an API Token which you can generate in [mailinator.com/v3/#/#team_settings_pane](https://www.mailinator.com/v3/#/#team_settings_pane).
 
-Usage examples live in `EXAMPLES.md`.
+Usage examples live in [EXAMPLES.md](https://github.com/manybrain/mailinator-csharp-client/blob/master/EXAMPLES.md).
 
 ##### Build with tests
 
