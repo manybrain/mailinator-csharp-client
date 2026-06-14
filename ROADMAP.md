@@ -25,12 +25,14 @@ This snapshot compares the SDK’s implemented operations to the Mailinator Open
 - Exact matches: 21
 - Missing from SDK: 10
 - SDK-only (no spec match): 17
+- SDK aliases / convenience wrappers: 1
 - Path parameter-name mismatches: 4
-- Operations with missing query params: 0
+- Operations with missing query params: 1
 
 Re-run locally:
 
 - Fetch the spec YAML and compare it to `mailinator-csharp-client/Clients/ApiClients/**` operations (method + effective path + query params).
+- Or run `dotnet run --project eng/OpenApiCoverageCheck -- --spec path/to/mailinator-api.yaml`.
 
 ### Work Items (spec → SDK)
 
@@ -66,6 +68,10 @@ Path template parameter names differ from the spec (non-breaking, but worth alig
 - Attachments: `{attachmentName}` (spec) vs `{attachmentId}` (SDK)
 - Authenticators: `{authenticator_id}` (spec) vs `{auth_id}` (SDK)
 - Domains: `{domain_name}` (spec) vs `{domain_id}` (SDK)
+
+Query parameters differ from the spec:
+
+- `GET /api/v2/domains/{domain}/inboxes/{inbox}/messages/{messageId}` is missing the optional `delete` query parameter in the SDK.
 
 ## Near-Term (next 1–3 updates)
 
