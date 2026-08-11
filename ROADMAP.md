@@ -9,12 +9,25 @@ This document is a living roadmap for the Mailinator C# client. It’s intention
 - Provide clear, copy/pasteable examples for common workflows.
 - Make releases predictable and easy to consume.
 
-## Current Status (to fill in)
+## Current Status:
 
-- Latest published package version:
-- Target frameworks:
-- API coverage vs spec:
-- Known gaps / bugs:
+- Target frameworks: `net471`; `netstandard2.0`
+- API coverage vs spec: see “Gap Analysis”
+- Known gaps / bugs: missing spec endpoints, SDK-only endpoints, path parameter-name mismatches, and one missing query parameter listed below.
+
+## Dependency Maintenance
+
+Current dependency snapshot:
+
+- `Newtonsoft.Json`: current `13.0.3`; latest stable checked `13.0.4`.
+- `RestSharp`: current `112.0.0`; latest stable checked `114.0.0`.
+- `Microsoft.OpenApi.Readers`: current `1.6.29`; latest stable 1.x checked `1.6.29`.
+
+Work items:
+
+- Update `Newtonsoft.Json` to `13.0.4` and run build/tests.
+- Evaluate `RestSharp` `114.0.0` before updating; verify API compatibility and run the full SDK test suite because RestSharp has a history of breaking changes across major versions.
+- Keep `Microsoft.OpenApi.Readers` on `1.6.29` for now; only evaluate `2.0.0` previews if the OpenAPI coverage tool needs functionality unavailable in stable 1.x.
 
 ## Gap Analysis (2026-03-23)
 
