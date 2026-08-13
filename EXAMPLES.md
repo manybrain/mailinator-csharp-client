@@ -76,92 +76,6 @@ var domain = await client.DomainsClient.GetDomainAsync(
     new GetDomainRequest { DomainId = "yourDomainIdHere" });
 ```
 
-Create + delete a domain:
-
-> **Deprecated:** `CreateDomainAsync` and `DeleteDomainAsync` are obsolete in this release.
-> For new code, use the currently supported Domains API operations instead.
-
-```csharp
-using System;
-using mailinator_csharp_client;
-using mailinator_csharp_client.Models.Domains.Requests;
-
-var client = new MailinatorClient("yourApiTokenHere");
-
-var created = await client.DomainsClient.CreateDomainAsync(
-    new CreateDomainRequest { Name = $"test{DateTime.UtcNow.Ticks}.testinator.com" });
-
-var deleted = await client.DomainsClient.DeleteDomainAsync(
-    new DeleteDomainRequest { DomainId = "yourDomainIdHere" });
-```
-
-## Rules
-
-Create + delete a rule:
-
-```csharp
-using System.Collections.Generic;
-using mailinator_csharp_client;
-using mailinator_csharp_client.Models.Rules.Entities;
-using mailinator_csharp_client.Models.Rules.Requests;
-
-var client = new MailinatorClient("yourApiTokenHere");
-
-var rule = new RuleToCreate
-{
-    Name = "rulename",
-    Priority = 15,
-    Description = "Description",
-    Match = MatchType.ANY,
-    Conditions = new List<Condition>
-    {
-        new Condition
-        {
-            Operation = OperationType.PREFIX,
-            ConditionData = new ConditionData { Field = "to", Value = "raul" }
-        }
-    },
-    Actions = new List<ActionRule>
-    {
-        new ActionRule
-        {
-            Action = ActionType.WEBHOOK,
-            ActionData = new ActionData { Url = "https://www.google.com" }
-        }
-    }
-};
-
-// DEPRECATED: RulesClient.CreateRuleAsync is obsolete in this release.
-// Prefer the current replacement API from the SDK documentation for new code.
-var created = await client.RulesClient.CreateRuleAsync(
-    new CreateRuleRequest { DomainId = "yourDomainIdHere", Rule = rule });
-
-// DEPRECATED: RulesClient.DeleteRuleAsync is obsolete in this release.
-// Prefer the current replacement API from the SDK documentation for new code.
-var deleted = await client.RulesClient.DeleteRuleAsync(
-    new DeleteRuleRequest { DomainId = "yourDomainIdHere", RuleId = "yourRuleIdHere" });
-```
-
-Enable + disable a rule:
-
-> **Deprecated:** `EnableRuleAsync` and `DisableRuleAsync` are obsolete in this release.
-> This example has been removed so new integrations do not adopt endpoints planned for removal.
-> For new code, use the currently supported Rules API operations instead.
-List rules + fetch a rule:
-
-```csharp
-using mailinator_csharp_client;
-using mailinator_csharp_client.Models.Rules.Requests;
-
-var client = new MailinatorClient("yourApiTokenHere");
-
-var all = await client.RulesClient.GetAllRulesAsync(
-    new GetAllRulesRequest { DomainId = "yourDomainIdHere" });
-
-var rule = await client.RulesClient.GetRuleAsync(
-    new GetRuleRequest { DomainId = "yourDomainIdHere", RuleId = "yourRuleIdHere" });
-```
-
 ## Messages
 
 Post (inject) a message:
@@ -215,7 +129,7 @@ var attachment = await client.MessagesClient.FetchMessageAttachmentAsync(
     new FetchMessageAttachmentRequest { Domain = "yourDomainNameHere", MessageId = "yourMessageIdHere", AttachmentId = "yourAttachmentIdHere" });
 ```
 
-Links, SMTP log, raw, latest:
+Links, SMTP log, and raw content:
 
 ```csharp
 using mailinator_csharp_client;
@@ -234,11 +148,6 @@ var smtp = await client.MessagesClient.FetchMessageSmtpLogAsync(
 
 var raw = await client.MessagesClient.FetchMessageRawAsync(
     new FetchMessageRawRequest { Domain = "yourDomainNameHere", MessageId = "yourMessageIdHere" });
-
-// DEPRECATED: MessagesClient.FetchLatestMessagesAsync is obsolete in this release.
-// Prefer non-"latest" message retrieval operations for new code.
-var latest = await client.MessagesClient.FetchLatestMessagesAsync(
-    new FetchLatestMessagesRequest { Domain = "yourDomainNameHere" });
 ```
 
 Deletes:
