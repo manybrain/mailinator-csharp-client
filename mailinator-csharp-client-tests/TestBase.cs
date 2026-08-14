@@ -11,6 +11,7 @@ using mailinator_csharp_client.Models.Rules.Responses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace mailinator_csharp_client_tests
     [TestClass]
     public class TestBase
     {
-        protected readonly MailinatorClient mailinatorClient;
+        protected MailinatorClient mailinatorClient;
 
         private Domain domain;
 
@@ -37,23 +38,39 @@ namespace mailinator_csharp_client_tests
         private const string ENV_WEBHOOK_INBOX = "MAILINATOR_TEST_WEBHOOK_INBOX";
         private const string ENV_WEBHOOK_CUSTOMSERVICE = "MAILINATOR_TEST_WEBHOOK_CUSTOMSERVICE";
 
+        private static readonly string ApiToken;
+
+        static TestBase()
+        {
+            LoadDotEnv();
+            ApiToken = GetEnvironmentVariable(ENV_API_TOKEN);
+        }
+
         protected TestBase()
         {
-            PrivateDomain = ENV_DOMAIN_PRIVATE;
-            DeleteDomain = ENV_DELETE_DOMAIN;
-            PrivateInbox = ENV_INBOX;
+            PrivateDomain = GetEnvironmentVariable(ENV_DOMAIN_PRIVATE);
+            DeleteDomain = GetEnvironmentVariable(ENV_DELETE_DOMAIN);
+            PrivateInbox = GetEnvironmentVariable(ENV_INBOX);
             InboxAll = "*";
-            MessageIdWithAttachment = ENV_MESSAGE_WITH_ATTACHMENT_ID;
-            TeamSMSNumber = ENV_PHONE_NUMBER;
-            AttachmentId = ENV_ATTACHMENT_ID;
-            WebhookTokenPrivateDomain = ENV_WEBHOOKTOKEN_PRIVATEDOMAIN;
-            WebhookTokenCustomService = ENV_WEBHOOKTOKEN_CUSTOMSERVICE;
-            AuthSecret = ENV_AUTH_SECRET;
-            AuthId = ENV_AUTH_ID;
-            WebhookInbox = ENV_WEBHOOK_INBOX;
-            WebhookCustomService = ENV_WEBHOOK_CUSTOMSERVICE;
+            MessageIdWithAttachment = GetEnvironmentVariable(ENV_MESSAGE_WITH_ATTACHMENT_ID);
+            TeamSMSNumber = GetEnvironmentVariable(ENV_PHONE_NUMBER);
+            AttachmentId = GetEnvironmentVariable(ENV_ATTACHMENT_ID);
+            WebhookTokenPrivateDomain = GetEnvironmentVariable(ENV_WEBHOOKTOKEN_PRIVATEDOMAIN);
+            WebhookTokenCustomService = GetEnvironmentVariable(ENV_WEBHOOKTOKEN_CUSTOMSERVICE);
+            AuthSecret = GetEnvironmentVariable(ENV_AUTH_SECRET);
+            AuthId = GetEnvironmentVariable(ENV_AUTH_ID);
+            WebhookInbox = GetEnvironmentVariable(ENV_WEBHOOK_INBOX);
+            WebhookCustomService = GetEnvironmentVariable(ENV_WEBHOOK_CUSTOMSERVICE);
 
-            mailinatorClient = new MailinatorClient(ENV_API_TOKEN);
+        }
+
+        [TestInitialize]
+        public void RequireApiToken()
+        {
+            if (string.IsNullOrWhiteSpace(ApiToken))
+                Assert.Inconclusive($"Skipping integration test: set {ENV_API_TOKEN} in the repository .env file or process environment.");
+
+            mailinatorClient = new MailinatorClient(ApiToken);
         }
 
         protected Domain Domain
@@ -139,6 +156,58 @@ namespace mailinator_csharp_client_tests
             };
             var request = new PostMessageRequest() { Domain = domain, Inbox = inbox, Message = message };
             return mailinatorClient.MessagesClient.PostMessageAsync(request);
+        }
+
+        private static string GetEnvironmentVariable(string name)
+        {
+            return Environment.GetEnvironmentVariable(name);
+        }
+
+        private static void LoadDotEnv()
+        {
+            var dotEnvPath = FindDotEnv(Environment.CurrentDirectory) ?? FindDotEnv(AppDomain.CurrentDomain.BaseDirectory);
+            if (dotEnvPath == null)
+                return;
+
+            foreach (var line in File.ReadAllLines(dotEnvPath))
+            {
+                var trimmedLine = line.Trim();
+                if (trimmedLine.Length == 0 || trimmedLine.StartsWith("#"))
+                    continue;
+
+                if (trimmedLine.StartsWith("export "))
+                    trimmedLine = trimmedLine.Substring("export ".Length).TrimStart();
+
+                var separatorIndex = trimmedLine.IndexOf('=');
+                if (separatorIndex <= 0)
+                    continue;
+
+                var name = trimmedLine.Substring(0, separatorIndex).Trim();
+                var value = trimmedLine.Substring(separatorIndex + 1).Trim();
+                if (value.Length >= 2 && ((value.StartsWith("\"") && value.EndsWith("\"")) || (value.StartsWith("'") && value.EndsWith("'"))))
+                    value = value.Substring(1, value.Length - 2);
+
+                if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(name)))
+                    Environment.SetEnvironmentVariable(name, value);
+            }
+        }
+
+        private static string FindDotEnv(string startDirectory)
+        {
+            if (string.IsNullOrWhiteSpace(startDirectory))
+                return null;
+
+            var directory = new DirectoryInfo(startDirectory);
+            while (directory != null)
+            {
+                var path = Path.Combine(directory.FullName, ".env");
+                if (File.Exists(path))
+                    return path;
+
+                directory = directory.Parent;
+            }
+
+            return null;
         }
     }
 }

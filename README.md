@@ -18,7 +18,7 @@ Usage examples live in [EXAMPLES.md](https://github.com/manybrain/mailinator-csh
 
 ##### Build with tests
 
-Some of the tests require env variables with valid values. Visit tests source code and review `TastBase.cs` class. The more env variables you set, the more tests are run.
+The tests are live integration tests. Configure them in a repository-root `.env` file (which is ignored by Git); process environment variables take precedence. If `MAILINATOR_TEST_API_TOKEN` is missing, the entire integration suite is skipped. Copy `.env.example` as a starting point.
 
 * `MAILINATOR_TEST_API_TOKEN` - API tokens for authentication; basic requirement across many tests;see also https://manybrain.github.io/m8rdocs/#api-authentication
 * `MAILINATOR_TEST_DOMAIN_PRIVATE` - private domain; visit https://www.mailinator.com/
