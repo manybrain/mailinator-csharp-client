@@ -18,6 +18,12 @@ Usage examples live in [EXAMPLES.md](https://github.com/manybrain/mailinator-csh
 
 ##### Build with tests
 
+Run the fast, offline unit tests with:
+
+```
+dotnet test mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-tests.csproj
+```
+
 The tests are live integration tests. Configure them in a repository-root `.env` file (which is ignored by Git); process environment variables take precedence. If `MAILINATOR_TEST_API_TOKEN` is missing, the entire integration suite is skipped. Copy `.env.example` as a starting point.
 
 * `MAILINATOR_TEST_API_TOKEN` - API tokens for authentication; basic requirement across many tests;see also https://manybrain.github.io/m8rdocs/#api-authentication
