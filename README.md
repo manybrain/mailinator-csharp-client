@@ -1,41 +1,99 @@
+# Mailinator C# SDK
 
-# Mailinator API Client Library
+The official C# SDK for the [Mailinator API](https://www.mailinator.com/documentation/docs/api/index.html). This package is a thin, asynchronous wrapper around the Mailinator REST API, and the [Mailinator OpenAPI specification](https://github.com/manybrain/mailinatordocs/blob/main/openapi/mailinator-api.yaml) is the source of truth for documented endpoints.
 
-C# Client Library used to interact with the [Mailinator](https://www.mailinator.com/) API
-Please read our [documentation](https://manybrain.github.io/m8rdocs/#mailinator/) for instructions on how to start using the API.
+The SDK targets .NET Framework 4.7.1 and .NET Standard 2.0.
 
-## How to Install
+## Installation
 
-`PM> Install-Package MailinatorApiClient`
+Install the `MailinatorApiClient` package from [NuGet](https://www.nuget.org/packages/MailinatorApiClient):
 
-## Usage
-
-To start using the API you need to first create an account at [mailinator.com](https://www.mailinator.com/).
-
-Once you have an account you will need an API Token which you can generate in [mailinator.com/v3/#/#team_settings_pane](https://www.mailinator.com/v3/#/#team_settings_pane).
-
-Usage examples live in [EXAMPLES.md](https://github.com/manybrain/mailinator-csharp-client/blob/master/EXAMPLES.md).
-
-##### Build with tests
-
-Run the fast, offline unit tests with:
-
+```sh
+dotnet add package MailinatorApiClient
 ```
+
+Package Manager Console:
+
+```powershell
+Install-Package MailinatorApiClient
+```
+
+PackageReference:
+
+```xml
+<PackageReference Include="MailinatorApiClient" Version="YOUR_VERSION" />
+```
+
+## Quick start
+
+Create a Mailinator account, then obtain an API token from **Team Settings > API Tokens**. Keep the token outside your source code—for example, in an environment variable.
+
+```csharp
+using System;
+using mailinator_csharp_client;
+using mailinator_csharp_client.Models.Messages.Entities;
+using mailinator_csharp_client.Models.Messages.Requests;
+
+var apiToken = Environment.GetEnvironmentVariable("MAILINATOR_API_TOKEN");
+if (string.IsNullOrEmpty(apiToken))
+{
+    throw new InvalidOperationException("Set MAILINATOR_API_TOKEN before running this example.");
+}
+
+var client = new MailinatorClient(apiToken);
+var response = await client.MessagesClient.FetchInboxAsync(
+    new FetchInboxRequest
+    {
+        Domain = "your-private-domain.com",
+        Inbox = "your-inbox",
+        Skip = 0,
+        Limit = 20,
+        Sort = Sort.desc
+    });
+```
+
+All API operations are asynchronous and end in `Async`. Operations are grouped under `MessagesClient`, `DomainsClient`, `AuthenticatorsClient`, `StatsClient`, `WebhooksClient`, and `RulesClient`.
+
+## API reference
+
+- [Mailinator API reference](https://www.mailinator.com/documentation/docs/api/index.html) describes the REST API.
+- [REFERENCE.md](REFERENCE.md) lists the operations currently exposed by this SDK.
+- [EXAMPLES.md](EXAMPLES.md) contains examples for common SDK workflows.
+
+## Authentication
+
+Construct `MailinatorClient` with an API token for messages, domains, authenticators, stats, and rules:
+
+```csharp
+var client = new MailinatorClient(apiToken);
+```
+
+Webhook injection uses a webhook token in the request URL and does not use an API token. The parameterless client constructor initializes `WebhooksClient` for these calls:
+
+```csharp
+var webhookClient = new MailinatorClient();
+```
+
+See the [webhook examples](EXAMPLES.md#webhooks) for complete requests.
+
+## Deprecated APIs
+
+Some older SDK operations do not appear in the current OpenAPI specification. They remain available for compatibility but are marked with `[Obsolete]` and may be removed in a future major release. See the deprecation notes in [REFERENCE.md](REFERENCE.md#deprecated-operations) and the alignment work in [ROADMAP.md](ROADMAP.md).
+
+## Development
+
+Build the solution when the installed .NET SDK supports all target frameworks:
+
+```sh
+dotnet build mailinator-csharp-client.sln
+```
+
+Run the fast, offline unit tests:
+
+```sh
 dotnet test mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-tests.csproj
 ```
 
-The tests are live integration tests. Configure them in a repository-root `.env` file (which is ignored by Git); process environment variables take precedence. If `MAILINATOR_TEST_API_TOKEN` is missing, the entire integration suite is skipped. Copy `.env.example` as a starting point.
+The separate legacy integration suite calls the live Mailinator API and requires deliberate account configuration. Some tests create or delete remote resources. Read [TESTING.md](TESTING.md) before running it.
 
-* `MAILINATOR_TEST_API_TOKEN` - API tokens for authentication; basic requirement across many tests;see also https://manybrain.github.io/m8rdocs/#api-authentication
-* `MAILINATOR_TEST_DOMAIN_PRIVATE` - private domain; visit https://www.mailinator.com/
-* `MAILINATOR_TEST_INBOX` - some already existing inbox within the private domain
-* `MAILINATOR_TEST_PHONE_NUMBER` - associated phone number within the private domain; see also https://manybrain.github.io/m8rdocs/#fetch-an-sms-messages
-* `MAILINATOR_TEST_MESSAGE_WITH_ATTACHMENT_ID` - existing message id within inbox (see above) within private domain (see above); see also https://manybrain.github.io/m8rdocs/#fetch-message
-* `MAILINATOR_TEST_ATTACHMENT_ID` - existing message id within inbox (see above) within private domain (see above); see also https://manybrain.github.io/m8rdocs/#fetch-message
-* `MAILINATOR_TEST_DELETE_DOMAIN` - don't use it unless you are 100% sure what you are doing
-* `MAILINATOR_TEST_WEBHOOKTOKEN_PRIVATEDOMAIN` - private domain for webhook token
-* `MAILINATOR_TEST_WEBHOOKTOKEN_CUSTOMSERVICE` - custom service for webhook token
-* `MAILINATOR_TEST_AUTH_SECRET` - authenticator secret
-* `MAILINATOR_TEST_AUTH_ID` - authenticator id
-* `MAILINATOR_TEST_WEBHOOK_INBOX` - inbox for webhook
-* `MAILINATOR_TEST_WEBHOOK_CUSTOMSERVICE` - custom service for webhook
+To compare the SDK request surface with the OpenAPI specification, use the [OpenAPI coverage check](eng/README.md#openapi-coverage-check).
