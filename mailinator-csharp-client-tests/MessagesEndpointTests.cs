@@ -133,6 +133,7 @@ namespace mailinator_csharp_client_tests
             {
                 await mailinatorClient.MessagesClient.FetchMessageAsync(request);
             });
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, exception.HttpStatusCode);
         }
 
         [TestMethod, TestCategory("Messages.FetchMessageWhenMessageDoesNotExistAsync")]
@@ -143,6 +144,7 @@ namespace mailinator_csharp_client_tests
             {
                 await mailinatorClient.MessagesClient.FetchMessageAsync(request);
             });
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, exception.HttpStatusCode);
         }
 
         [TestMethod, TestCategory("Messages.FetchInboxMessageAsync")]
@@ -167,6 +169,7 @@ namespace mailinator_csharp_client_tests
             {
                 await mailinatorClient.MessagesClient.FetchInboxMessageAsync(request);
             });
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, exception.HttpStatusCode);
         }
 
         [TestMethod, TestCategory("Messages.FetchSMSMessagesAsync")]

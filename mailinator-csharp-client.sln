@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mailinator-csharp-client", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mailinator-csharp-client-tests", "mailinator-csharp-client-tests\mailinator-csharp-client-tests.csproj", "{D59A67E5-DE4B-49AF-BD14-143091B46527}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiCoverageCheck", "eng\OpenApiCoverageCheck\OpenApiCoverageCheck.csproj", "{C95520B0-8396-4D8C-9317-A8A958296A47}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mailinator-csharp-client-unit-tests", "mailinator-csharp-client-unit-tests\mailinator-csharp-client-unit-tests.csproj", "{6F9324B4-AB58-4E62-90E0-9AF8B6C23B6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{D59A67E5-DE4B-49AF-BD14-143091B46527}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D59A67E5-DE4B-49AF-BD14-143091B46527}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D59A67E5-DE4B-49AF-BD14-143091B46527}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C95520B0-8396-4D8C-9317-A8A958296A47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C95520B0-8396-4D8C-9317-A8A958296A47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C95520B0-8396-4D8C-9317-A8A958296A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C95520B0-8396-4D8C-9317-A8A958296A47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F9324B4-AB58-4E62-90E0-9AF8B6C23B6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F9324B4-AB58-4E62-90E0-9AF8B6C23B6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F9324B4-AB58-4E62-90E0-9AF8B6C23B6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F9324B4-AB58-4E62-90E0-9AF8B6C23B6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

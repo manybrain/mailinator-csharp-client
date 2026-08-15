@@ -2,6 +2,7 @@
 using mailinator_csharp_client.Models.Domains.Requests;
 using mailinator_csharp_client.Models.Domains.Responses;
 using RestSharp;
+using System;
 using System.Threading.Tasks;
 
 namespace mailinator_csharp_client.Clients.ApiClients.Domains
@@ -53,6 +54,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Domains
         /// </summary>
         /// <param name="request">CreateDomainRequest object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Domain create/delete endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<CreateDomainResponse> CreateDomainAsync(CreateDomainRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}", Method.Post);
@@ -67,6 +69,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Domains
         /// </summary>
         /// <param name="request">DeleteDomainRequest object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Domain create/delete endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<DeleteDomainResponse> DeleteDomainAsync(DeleteDomainRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain_id}", Method.Delete);

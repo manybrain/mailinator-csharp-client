@@ -5,6 +5,7 @@ using mailinator_csharp_client.Models.Responses;
 using RestSharp;
 using System.IO;
 using System.Threading.Tasks;
+using System;
 
 namespace mailinator_csharp_client.Clients.ApiClients.Messages
 {
@@ -379,6 +380,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// </summary>
         /// <param name="request">FetchLatestMessagesResponse object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Latest message wildcard endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<FetchLatestMessagesResponse> FetchLatestMessagesAsync(FetchLatestMessagesRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/*", Method.Get);
@@ -394,6 +396,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         /// </summary>
         /// <param name="request">FetchLatestInboxMessagesResponse object.</param>
         /// <returns></returns>
+        [Obsolete("Deprecated: Latest message wildcard endpoints are not present in the current Mailinator OpenAPI spec. This method may be removed in a future release.")]
         public async Task<FetchLatestInboxMessagesResponse> FetchLatestInboxMessagesAsync(FetchLatestInboxMessagesRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes/{inbox}/messages/*", Method.Get);

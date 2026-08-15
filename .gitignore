@@ -275,4 +275,5 @@ Session.vim
 
 # Private test configuration and binaries.
 config.ps1
+.env
 **/IISApplications
