@@ -24,6 +24,10 @@ The format is based on *Keep a Changelog* and this project aims to follow *Seman
 
 - `AuthenticatorsClient.GetAuthenticatorsAsync`, `GetAuthenticatorAsync`, and `GetAuthenticatorByIdAsync`; use `GetAuthenticatorsByIdAsync` for the documented stored-authenticator operation.
 
+### Fixed
+
+- Forwarded the optional `delete` query parameter in `FetchInboxMessageAsync`.
+
 
 ## [1.0.7] - 2026-08-15
 

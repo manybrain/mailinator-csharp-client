@@ -66,6 +66,25 @@ namespace mailinator_csharp_client_unit_tests
         }
 
         [TestMethod]
+        public async Task FetchInboxMessageAsync_ForwardsDeleteQueryParameter()
+        {
+            var httpClient = new RecordingHttpClient();
+            var client = new MessagesClient(httpClient, "domains");
+
+            await client.FetchInboxMessageAsync(new FetchInboxMessageRequest
+            {
+                Domain = "example.com",
+                Inbox = "orders",
+                MessageId = "message-123",
+                Delete = "30s"
+            });
+
+            Assert.AreEqual(Method.Get, httpClient.Request.Method);
+            Assert.AreEqual("domains/{domain}/inboxes/{inbox}/messages/{messageId}", httpClient.Request.Resource);
+            Assert.AreEqual("30s", ParameterValue(httpClient.Request, "delete"));
+        }
+
+        [TestMethod]
         public async Task PostMessageAsync_BuildsPostRequestWithJsonBody()
         {
             var httpClient = new RecordingHttpClient();
