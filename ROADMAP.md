@@ -21,14 +21,14 @@ Audit refreshed: 2026-09-04.
 
 Security status:
 
-- The SDK's resolved `System.Text.Json` `8.0.4` dependency was vulnerable to CVE-2024-43485. Version `8.0.5` is explicitly referenced in the SDK and the current NuGet vulnerability audit is clean for both SDK target frameworks.
+- The SDK's resolved `System.Text.Json` `8.0.4` dependency was vulnerable to CVE-2024-43485. Version `10.0.11` is explicitly referenced in the SDK and the current NuGet vulnerability audit is clean for both SDK target frameworks.
 - The SDK, offline unit-test project, OpenAPI coverage tool, and live integration-test project have no vulnerable packages in the current NuGet audit.
 - The repository has no lock files.
 
 Production and tooling dependencies:
 
 - `Newtonsoft.Json`: current `13.0.4`; latest stable `13.0.4`.
-- `RestSharp`: current `112.0.0`; latest stable `114.0.0`. Version `114.0.0` still supports `net471` and `netstandard2.0`, but raises its `System.Text.Json` dependency from `8.0.4` to `10.0.0` and requires API compatibility testing.
+- `RestSharp`: current `114.0.0`; latest stable `114.0.0`.
 - `Microsoft.OpenApi.Readers`: current `1.6.31`; latest stable `1.6.31` (2.x remains preview-only).
 
 Legacy test-project status:
@@ -38,7 +38,6 @@ Legacy test-project status:
 
 Remaining work items:
 
-- Evaluate `RestSharp` `114.0.0` in a dedicated change; verify source compatibility, serialization behavior, all target frameworks, and the full SDK test suite.
 - Keep `Microsoft.OpenApi.Readers` on the stable `1.6.x` line until a stable 2.x release or a specific tooling requirement justifies a preview.
 - Add lock files and a CI dependency check (`dotnet list package --vulnerable --include-transitive`) after restore tooling is available.
 
