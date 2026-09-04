@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 
 namespace mailinator_csharp_client_tests
 {
-    [TestClass]
     public class TestBase
     {
         protected MailinatorClient mailinatorClient;
