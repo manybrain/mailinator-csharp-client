@@ -129,7 +129,7 @@ namespace mailinator_csharp_client_tests
 
             Thread.Sleep(45 * 1000);
 
-            var exception = await Assert.ThrowsExceptionAsync<ApiException>(async () =>
+            var exception = await Assert.ThrowsExactlyAsync<ApiException>(async () =>
             {
                 await mailinatorClient.MessagesClient.FetchMessageAsync(request);
             });
@@ -140,7 +140,7 @@ namespace mailinator_csharp_client_tests
         public async Task FetchMessageWhenMessageDoesNotExistAsync()
         {
             var request = new FetchMessageRequest() { Domain = PrivateDomain, MessageId = DateTime.UtcNow.Ticks.ToString() };
-            var exception = await Assert.ThrowsExceptionAsync<ApiException>(async () =>
+            var exception = await Assert.ThrowsExactlyAsync<ApiException>(async () =>
             {
                 await mailinatorClient.MessagesClient.FetchMessageAsync(request);
             });
@@ -165,7 +165,7 @@ namespace mailinator_csharp_client_tests
         public async Task FetchInboxMessageWhenMessageDoesNotExistAsync()
         {
             var request = new FetchInboxMessageRequest() { Domain = PrivateDomain, Inbox = PrivateInbox, MessageId = DateTime.UtcNow.Ticks.ToString() };
-            var exception = await Assert.ThrowsExceptionAsync<ApiException>(async () =>
+            var exception = await Assert.ThrowsExactlyAsync<ApiException>(async () =>
             {
                 await mailinatorClient.MessagesClient.FetchInboxMessageAsync(request);
             });

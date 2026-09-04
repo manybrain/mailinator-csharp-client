@@ -22,8 +22,7 @@ Audit refreshed: 2026-09-04.
 Security status:
 
 - The SDK's resolved `System.Text.Json` `8.0.4` dependency was vulnerable to CVE-2024-43485. Version `8.0.5` is explicitly referenced in the SDK and the current NuGet vulnerability audit is clean for both SDK target frameworks.
-- The offline unit-test project and OpenAPI coverage tool have no vulnerable packages in the current NuGet audit.
-- The legacy integration-test project cannot be scanned by `dotnet list package --vulnerable --include-transitive` until it is migrated from `packages.config` to `PackageReference`.
+- The SDK, offline unit-test project, OpenAPI coverage tool, and live integration-test project have no vulnerable packages in the current NuGet audit.
 - The repository has no lock files.
 
 Production and tooling dependencies:
@@ -32,18 +31,14 @@ Production and tooling dependencies:
 - `RestSharp`: current `112.0.0`; latest stable `114.0.0`. Version `114.0.0` still supports `net471` and `netstandard2.0`, but raises its `System.Text.Json` dependency from `8.0.4` to `10.0.0` and requires API compatibility testing.
 - `Microsoft.OpenApi.Readers`: current `1.6.31`; latest stable `1.6.31` (2.x remains preview-only).
 
-Legacy test-project dependencies:
+Legacy test-project status:
 
-- `Microsoft.ApplicationInsights`: `2.22.0` → `3.1.2`.
-- `Microsoft.Testing.Platform` and related extensions: `1.3.2` → `2.4.0`.
-- `Microsoft.TestPlatform.ObjectModel`: `17.10.0` → `18.9.0`.
-- `MSTest.TestAdapter` and `MSTest.TestFramework`: `3.5.2` → `4.4.0`.
-- Explicitly pinned support packages are also behind: `System.Buffers` (`4.5.1` → `4.6.1`), `System.Collections.Immutable` (`1.5.0` → `10.0.10`), `System.Diagnostics.DiagnosticSource` (`5.0.0` → `10.0.10`), `System.Memory` (`4.5.4` → `4.6.3`), `System.Numerics.Vectors` (`4.5.0` → `4.6.1`), `System.Reflection.Metadata` (`1.6.0` → `10.0.10`), and `System.Runtime.CompilerServices.Unsafe` (`5.0.0` → `6.1.2`).
+- The `net472` live integration-test project uses SDK-style `PackageReference` and the same `Microsoft.NET.Test.Sdk` `18.9.0` / MSTest `4.4.0` stack as the offline unit tests.
+- Its dependencies are now restored transitively, rather than through direct `System.*` package pins, and can be audited with `dotnet list package --vulnerable --include-transitive`.
 
 Remaining work items:
 
 - Evaluate `RestSharp` `114.0.0` in a dedicated change; verify source compatibility, serialization behavior, all target frameworks, and the full SDK test suite.
-- Convert the legacy `net472` test project from `packages.config` to SDK-style `PackageReference`, then upgrade the Microsoft testing packages as one coordinated stack and remove direct pins for transitive `System.*` dependencies where possible. This will also make the project eligible for automated vulnerability auditing.
 - Keep `Microsoft.OpenApi.Readers` on the stable `1.6.x` line until a stable 2.x release or a specific tooling requirement justifies a preview.
 - Add lock files and a CI dependency check (`dotnet list package --vulnerable --include-transitive`) after restore tooling is available.
 
