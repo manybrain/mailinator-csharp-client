@@ -56,9 +56,8 @@ Add these operations that exist in the spec but are missing from the SDK:
 
 ### Work Items (SDK → spec)
 
-These SDK operations do not have a matching operation in the current OpenAPI spec. Decide for each group whether to (a) update the spec, (b) deprecate/remove the SDK surface, or (c) keep but document explicitly as “not in spec”.
+These SDK operations do not have a matching operation in the current OpenAPI spec. All remaining cases now have a compatibility decision recorded below.
 
-- **Authenticators** list/get variants (`/api/v2/authenticator...` and `/api/v2/authenticators`)
 - **Webhooks** private/custom-service endpoints (`POST /api/v2/domains/private/...`) are intentional, supported compatibility APIs shared with the JavaScript client. Keep them documented and do not deprecate them solely because they are absent from the current spec.
 
 ### Resolved compatibility decisions
@@ -67,6 +66,7 @@ The following operations are already deprecated. Retain them for source compatib
 
 - **Rules** — 6 operations under `/api/v2/domains/{domain_id}/rules...`
 - **Domains** — create/delete (`POST`/`DELETE /api/v2/domains/{domain_id}`)
+- **Authenticators** — list/get variants under `/api/v2/authenticator...` and `/api/v2/authenticators` that are not represented in the spec
 - **Messages** — “latest” wildcard endpoints (`GET .../messages/*`)
 
 ### Work Items (spec alignment)

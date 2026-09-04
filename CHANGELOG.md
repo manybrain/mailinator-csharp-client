@@ -20,6 +20,10 @@ The format is based on *Keep a Changelog* and this project aims to follow *Seman
 - Updated integration-test exception assertions and binding redirects for MSTest 4 compatibility.
 - Added NuGet package lock files.
 
+### Deprecated
+
+- `AuthenticatorsClient.GetAuthenticatorsAsync`, `GetAuthenticatorAsync`, and `GetAuthenticatorByIdAsync`; use `GetAuthenticatorsByIdAsync` for the documented stored-authenticator operation.
+
 
 ## [1.0.7] - 2026-08-15
 
