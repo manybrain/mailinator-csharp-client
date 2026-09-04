@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on *Keep a Changelog* and this project aims to follow *Semantic Versioning*.
 
+## [1.0.8] - TBD
+
+### Security
+
+- Updated the transitive `System.Text.Json` dependency to `8.0.5` to remediate CVE-2024-43485.
+
+### Changed
+
+- Updated `Newtonsoft.Json` to `13.0.4`.
+- Updated the OpenAPI coverage tool's `Microsoft.OpenApi.Readers` dependency to `1.6.31`.
+- Updated the offline unit-test stack to `Microsoft.NET.Test.Sdk` `18.9.0` and MSTest `4.4.0`.
+
 
 ## [1.0.7] - 2026-08-15
 
