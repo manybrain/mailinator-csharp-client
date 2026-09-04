@@ -100,6 +100,7 @@ The following public methods are marked `[Obsolete]`. They remain in the current
 | --- | --- | --- |
 | `MessagesClient` | `FetchLatestMessagesAsync`, `FetchLatestInboxMessagesAsync` | The wildcard “latest” endpoints are not in the current OpenAPI specification. |
 | `DomainsClient` | `CreateDomainAsync`, `DeleteDomainAsync` | Domain create/delete endpoints are not in the current OpenAPI specification. |
+| `AuthenticatorsClient` | `GetAuthenticatorsAsync`, `GetAuthenticatorAsync`, `GetAuthenticatorByIdAsync` | These list/get endpoints are not in the current OpenAPI specification. |
 | `RulesClient` | All operations | Rules endpoints are not in the current OpenAPI specification. |
 
 See [ROADMAP.md](ROADMAP.md) for known specification gaps and planned alignment work.

@@ -43,7 +43,7 @@ var response = await client.MessagesClient.FetchInboxAsync(request);
 
 ## Authenticators
 
-Instant TOTP code + list authenticators:
+Instant TOTP code + get a stored authenticator:
 
 ```csharp
 using mailinator_csharp_client;
@@ -53,8 +53,6 @@ var client = new MailinatorClient("yourApiTokenHere");
 
 var totp = await client.AuthenticatorsClient.InstantTOTP2FACodeAsync(
     new InstantTOTP2FACodeRequest { TotpSecretKey = "yourAuthSecret" });
-
-var authenticators = await client.AuthenticatorsClient.GetAuthenticatorsAsync();
 
 var byId = await client.AuthenticatorsClient.GetAuthenticatorsByIdAsync(
     new GetAuthenticatorsByIdRequest { Id = "yourAuthId" });
