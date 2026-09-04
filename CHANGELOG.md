@@ -17,6 +17,7 @@ The format is based on *Keep a Changelog* and this project aims to follow *Seman
 - Updated the OpenAPI coverage tool's `Microsoft.OpenApi.Readers` dependency to `1.6.31`.
 - Updated the offline unit-test stack to `Microsoft.NET.Test.Sdk` `18.9.0` and MSTest `4.4.0`.
 - Migrated the live integration-test project to SDK-style `PackageReference` and the same current test stack.
+- Added NuGet package lock files.
 
 
 ## [1.0.7] - 2026-08-15

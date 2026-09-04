@@ -23,7 +23,7 @@ Security status:
 
 - The SDK's resolved `System.Text.Json` `8.0.4` dependency was vulnerable to CVE-2024-43485. Version `10.0.11` is explicitly referenced in the SDK and the current NuGet vulnerability audit is clean for both SDK target frameworks.
 - The SDK, offline unit-test project, OpenAPI coverage tool, and live integration-test project have no vulnerable packages in the current NuGet audit.
-- The repository has no lock files.
+- Package lock files are committed for all projects to make restores reproducible.
 
 Production and tooling dependencies:
 
@@ -39,7 +39,6 @@ Legacy test-project status:
 Remaining work items:
 
 - Keep `Microsoft.OpenApi.Readers` on the stable `1.6.x` line until a stable 2.x release or a specific tooling requirement justifies a preview.
-- Add lock files and a CI dependency check (`dotnet list package --vulnerable --include-transitive`) after restore tooling is available.
 
 ## Gap Analysis (2026-03-23)
 
