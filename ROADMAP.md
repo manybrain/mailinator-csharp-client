@@ -13,13 +13,13 @@ This document is a living roadmap for the Mailinator C# client. It’s intention
 
 - Target frameworks: `net471`; `netstandard2.0`
 - API coverage vs spec: see “Gap Analysis”
-- Known gaps / bugs: missing spec endpoints, SDK-only endpoints, path parameter-name mismatches, and one missing query parameter listed below.
+- Known gaps / bugs: missing spec endpoints and documented SDK-only compatibility operations. Path parameter-name differences and the SMS convenience alias are intentional and do not change the resulting HTTP route.
 
 ## Dependency Maintenance
 
 Dependencies were audited on 2026-09-04. All projects have a clean NuGet vulnerability audit, and committed package lock files make restores reproducible.
 
-## Gap Analysis (2026-03-23)
+## Gap Analysis (2026-09-04)
 
 This snapshot compares the SDK’s implemented operations to the Mailinator OpenAPI spec (`mailinator-api.yaml`).
 
@@ -30,7 +30,7 @@ This snapshot compares the SDK’s implemented operations to the Mailinator Open
 - SDK-only (no spec match): 17
 - SDK aliases / convenience wrappers: 1
 - Path parameter-name mismatches: 4
-- Operations with missing query params: 1
+- Operations with missing query params: 0
 
 Re-run locally:
 
@@ -66,28 +66,24 @@ The following operations are already deprecated. Retain them for source compatib
 
 - **Rules** — 6 operations under `/api/v2/domains/{domain_id}/rules...`
 - **Domains** — create/delete (`POST`/`DELETE /api/v2/domains/{domain_id}`)
-- **Authenticators** — list/get variants under `/api/v2/authenticator...` and `/api/v2/authenticators` that are not represented in the spec
+- **Authenticators** — the unsupported list/get variants under `/api/v2/authenticator...` and `/api/v2/authenticators` are deprecated; retain them only until a future breaking major release.
 - **Messages** — “latest” wildcard endpoints (`GET .../messages/*`)
 
 ### Work Items (spec alignment)
 
-Path template parameter names differ from the spec (non-breaking, but worth aligning for clarity and consistency):
+Path template parameter names differ from the spec. These are intentional, non-functional differences; the resulting HTTP routes are the same, so no SDK change is planned:
 
 - Attachments: `{attachmentName}` (spec) vs `{attachmentId}` (SDK)
 - Authenticators: `{authenticator_id}` (spec) vs `{auth_id}` (SDK)
 - Domains: `{domain_name}` (spec) vs `{domain_id}` (SDK)
 
-Query parameters differ from the spec:
-
-- `GET /api/v2/domains/{domain}/inboxes/{inbox}/messages/{messageId}` is missing the optional `delete` query parameter in the SDK.
+`FetchSMSMessagesAsync` is also an intentional convenience alias for inbox retrieval using the team SMS number. `FetchInboxAsync` remains available when callers need the full inbox-listing parameter set.
 
 ## Near-Term (next 1–3 updates)
 
 - Keep gap analysis up to date (re-run after changes).
 - Decide on versioning and release cadence.
 - Implement missing spec endpoints (see “Work Items (spec → SDK)”).
-- Resolve spec alignment issues (path template parameter names).
-- Make an explicit decision on SDK-only endpoints (spec update vs deprecate vs document).
 - Improve docs: examples, configuration, troubleshooting.
 
 ## Mid-Term

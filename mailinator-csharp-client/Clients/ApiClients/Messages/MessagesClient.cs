@@ -66,6 +66,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
+            requestObject.AddSafeQueryParameter("delete", request.Delete?.ToString());
 
             var response = await httpClient.ExecuteAsync<FetchInboxMessageResponse>(requestObject);
             return response;
