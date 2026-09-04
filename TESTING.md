@@ -4,7 +4,7 @@ The repository has two distinct MSTest suites: fast offline unit tests and legac
 
 ## Offline unit tests
 
-The .NET 8 unit-test project verifies request construction without making network calls:
+The .NET 8 unit-test project verifies request construction for every public async SDK operation without making network calls. It asserts each operation's HTTP method, route, path/query parameters, and JSON body where applicable:
 
 ```sh
 dotnet test mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-tests.csproj
