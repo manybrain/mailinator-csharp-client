@@ -17,28 +17,7 @@ This document is a living roadmap for the Mailinator C# client. It’s intention
 
 ## Dependency Maintenance
 
-Audit refreshed: 2026-09-04.
-
-Security status:
-
-- The SDK's resolved `System.Text.Json` `8.0.4` dependency was vulnerable to CVE-2024-43485. Version `10.0.11` is explicitly referenced in the SDK and the current NuGet vulnerability audit is clean for both SDK target frameworks.
-- The SDK, offline unit-test project, OpenAPI coverage tool, and live integration-test project have no vulnerable packages in the current NuGet audit.
-- Package lock files are committed for all projects to make restores reproducible.
-
-Production and tooling dependencies:
-
-- `Newtonsoft.Json`: current `13.0.4`; latest stable `13.0.4`.
-- `RestSharp`: current `114.0.0`; latest stable `114.0.0`.
-- `Microsoft.OpenApi.Readers`: current `1.6.31`; latest stable `1.6.31` (2.x remains preview-only).
-
-Legacy test-project status:
-
-- The `net472` live integration-test project uses SDK-style `PackageReference` and the same `Microsoft.NET.Test.Sdk` `18.9.0` / MSTest `4.4.0` stack as the offline unit tests.
-- Its dependencies are now restored transitively, rather than through direct `System.*` package pins, and can be audited with `dotnet list package --vulnerable --include-transitive`.
-
-Remaining work items:
-
-- Keep `Microsoft.OpenApi.Readers` on the stable `1.6.x` line until a stable 2.x release or a specific tooling requirement justifies a preview.
+Dependencies were audited on 2026-09-04. All projects have a clean NuGet vulnerability audit, and committed package lock files make restores reproducible.
 
 ## Gap Analysis (2026-03-23)
 
@@ -79,11 +58,16 @@ Add these operations that exist in the spec but are missing from the SDK:
 
 These SDK operations do not have a matching operation in the current OpenAPI spec. Decide for each group whether to (a) update the spec, (b) deprecate/remove the SDK surface, or (c) keep but document explicitly as “not in spec”.
 
-- **Rules** (6 operations under `/api/v2/domains/{domain_id}/rules...`)
-- **Domains** create/delete (`POST`/`DELETE /api/v2/domains/{domain_id}`)
 - **Authenticators** list/get variants (`/api/v2/authenticator...` and `/api/v2/authenticators`)
-- **Messages** “latest” wildcard endpoints (`GET .../messages/*`)
-- **Webhooks** private/custom-service endpoints (`POST /api/v2/domains/private/...`)
+- **Webhooks** private/custom-service endpoints (`POST /api/v2/domains/private/...`) are intentional, supported compatibility APIs shared with the JavaScript client. Keep them documented and do not deprecate them solely because they are absent from the current spec.
+
+### Resolved compatibility decisions
+
+The following operations are already deprecated. Retain them for source compatibility and skip further spec-alignment work; remove them only in a future breaking major release.
+
+- **Rules** — 6 operations under `/api/v2/domains/{domain_id}/rules...`
+- **Domains** — create/delete (`POST`/`DELETE /api/v2/domains/{domain_id}`)
+- **Messages** — “latest” wildcard endpoints (`GET .../messages/*`)
 
 ### Work Items (spec alignment)
 
@@ -108,7 +92,7 @@ Query parameters differ from the spec:
 
 ## Mid-Term
 
-- Improve test coverage and add integration test guidance.
+- Improve test coverage.
 - Add more ergonomic APIs / helpers while keeping the low-level request mapping.
 
 ## Long-Term
