@@ -26,6 +26,53 @@ namespace mailinator_csharp_client_unit_tests
     public class ApiClientRequestTests
     {
         [TestMethod]
+        public async Task ListDomainMessagesAsync_BuildsDomainRouteAndAllQueryParameters()
+        {
+            var httpClient = new RecordingHttpClient();
+            var client = new MessagesClient(httpClient, "domains");
+
+            await client.ListDomainMessagesAsync(new ListDomainMessagesRequest
+            {
+                Domain = "example.com", Inbox = "orders*", Skip = 10, Limit = 20,
+                Sort = Sort.asc, DecodeSubject = true, Cursor = "next+page=",
+                Full = true, Delete = "30s", Wait = "10s"
+            });
+
+            AssertRequest(httpClient, Method.Get, "domains/{domain}/inboxes",
+                "domain", "example.com", "inbox", "orders*", "skip", "10", "limit", "20",
+                "sort", "asc", "decode_subject", "True", "cursor", "next+page=",
+                "full", "True", "delete", "30s", "wait", "10s");
+            Assert.AreEqual(9, httpClient.Request.Parameters.Count(p => p.Type == ParameterType.QueryString));
+            Assert.AreEqual(ParameterType.QueryString, httpClient.Request.Parameters.Single(p => p.Name == "inbox").Type);
+            Assert.AreEqual(ParameterType.UrlSegment, httpClient.Request.Parameters.Single(p => p.Name == "domain").Type);
+        }
+
+        [TestMethod]
+        public async Task ListDomainMessagesAsync_DefaultsToEntireDomainWithoutOptionalFilters()
+        {
+            var httpClient = new RecordingHttpClient();
+            var client = new MessagesClient(httpClient, "domains");
+
+            await client.ListDomainMessagesAsync(new ListDomainMessagesRequest());
+
+            AssertRequest(httpClient, Method.Get, "domains/{domain}/inboxes",
+                "domain", "private", "skip", "0", "limit", "50", "sort", "desc", "decode_subject", "False");
+            CollectionAssert.AreEquivalent(new[] { "skip", "limit", "sort", "decode_subject" },
+                httpClient.Request.Parameters.Where(p => p.Type == ParameterType.QueryString).Select(p => p.Name).ToArray());
+        }
+
+        [TestMethod]
+        public async Task ListDomainMessagesAsync_PreservesWildcardAndExplicitFalse()
+        {
+            var httpClient = new RecordingHttpClient();
+            var client = new MessagesClient(httpClient, "domains");
+
+            await client.ListDomainMessagesAsync(new ListDomainMessagesRequest { Inbox = "*", Full = false });
+
+            AssertRequest(httpClient, Method.Get, "domains/{domain}/inboxes", "inbox", "*", "full", "False");
+        }
+
+        [TestMethod]
         public async Task GetDomainAsync_BuildsGetRequestWithDomainUrlSegment()
         {
             var httpClient = new RecordingHttpClient();

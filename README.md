@@ -54,6 +54,8 @@ var response = await client.MessagesClient.FetchInboxAsync(
 
 All API operations are asynchronous and end in `Async`. Operations are grouped under `MessagesClient`, `DomainsClient`, `AuthenticatorsClient`, `StatsClient`, `WebhooksClient`, and `RulesClient`.
 
+To list messages across a domain, use `MessagesClient.ListDomainMessagesAsync(new ListDomainMessagesRequest { Domain = "your-private-domain.com" })`. The optional `Inbox` query filter scopes results to an inbox; omit it to include all inboxes. See the [domain listing example](EXAMPLES.md#list-domain-messages) for pagination.
+
 ## API reference
 
 - [Mailinator API reference](https://www.mailinator.com/documentation/docs/api/index.html) describes the REST API.
