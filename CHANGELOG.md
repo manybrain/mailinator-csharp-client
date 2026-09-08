@@ -6,6 +6,11 @@ The format is based on *Keep a Changelog* and this project aims to follow *Seman
 
 ## [1.0.8] - TBD
 
+### Added
+
+- `MessagesClient.ListDomainMessagesAsync` and `ListDomainMessagesRequest` for domain-wide message listing, with optional inbox filtering and all documented listing parameters. Returns the existing `FetchInboxResponse` model.
+- Offline tests for domain listing query parameters, default behavior, and wildcard filtering.
+
 ### Security
 
 - Updated the transitive `System.Text.Json` dependency to `10.0.11` to remediate CVE-2024-43485.

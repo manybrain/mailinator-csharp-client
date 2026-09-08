@@ -12,6 +12,31 @@ namespace mailinator_csharp_client_tests
     [TestClass]
     public class MessagesEndpointTests : TestBase
     {
+        [TestMethod, TestCategory("Messages.ListDomainMessagesAsync")]
+        public async Task ListDomainMessagesAsync()
+        {
+            if (string.IsNullOrWhiteSpace(PrivateDomain))
+                Assert.Inconclusive("Set MAILINATOR_TEST_DOMAIN_PRIVATE to run the domain listing integration test.");
+
+            var request = new ListDomainMessagesRequest { Domain = PrivateDomain, Limit = 2 };
+            mailinator_csharp_client.Models.Responses.FetchInboxResponse response;
+            try
+            {
+                response = await mailinatorClient.MessagesClient.ListDomainMessagesAsync(request);
+            }
+            catch (ApiException exception)
+            {
+                // API error bodies can contain private message data; report only the status.
+                Assert.Fail($"Domain listing failed with HTTP status {(int)exception.HttpStatusCode}.");
+                return;
+            }
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Domain == PrivateDomain, "The response should identify the requested domain.");
+            Assert.IsNotNull(response.Messages);
+            Assert.IsTrue(response.Messages.Count <= request.Limit, "The result should respect the requested limit.");
+        }
+
         [TestMethod, TestCategory("Messages.PostMessageAsync")]
         public async Task PostMessageAsync()
         {

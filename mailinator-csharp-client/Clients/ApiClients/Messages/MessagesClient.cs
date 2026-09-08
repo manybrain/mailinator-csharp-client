@@ -24,6 +24,29 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         }
 
         /// <summary>
+        /// Retrieves message summaries across a domain, optionally filtered by inbox.
+        /// </summary>
+        /// <param name="request">Domain, optional inbox filter, and listing options.</param>
+        /// <returns>Message summaries (or full messages when requested) and a pagination cursor.</returns>
+        public async Task<FetchInboxResponse> ListDomainMessagesAsync(ListDomainMessagesRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddSafeQueryParameter("inbox", request.Inbox);
+            requestObject.AddSafeQueryParameter("skip", request.Skip.ToString());
+            requestObject.AddSafeQueryParameter("limit", request.Limit.ToString());
+            requestObject.AddSafeQueryParameter("sort", request.Sort.ToString());
+            requestObject.AddSafeQueryParameter("decode_subject", request.DecodeSubject.ToString());
+            requestObject.AddSafeQueryParameter("cursor", request.Cursor);
+            requestObject.AddSafeQueryParameter("full", request.Full?.ToString());
+            requestObject.AddSafeQueryParameter("delete", request.Delete);
+            requestObject.AddSafeQueryParameter("wait", request.Wait);
+
+            var response = await httpClient.ExecuteAsync<FetchInboxResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
         /// This endpoint retrieves a list of messages summaries. You can retreive a list by inbox, inboxes, or entire domain.
         /// :domain	
         /// public	Fetch Message Summaries from the Public Mailinator System

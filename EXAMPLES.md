@@ -76,6 +76,37 @@ var domain = await client.DomainsClient.GetDomainAsync(
 
 ## Messages
 
+### List domain messages
+
+List messages across all inboxes in a domain:
+
+```csharp
+using mailinator_csharp_client.Models.Messages.Requests;
+
+// Uses the authenticated client created in Setup.
+var request = new ListDomainMessagesRequest
+{
+    Domain = "your_private_domain.com",
+    Limit = 20
+};
+
+var response = await client.MessagesClient.ListDomainMessagesAsync(request);
+var messages = response.Messages;
+
+// Fetch the next page only when the API supplies a cursor.
+if (!string.IsNullOrEmpty(response.Cursor))
+{
+    request.Cursor = response.Cursor;
+    var nextPage = await client.MessagesClient.ListDomainMessagesAsync(request);
+}
+```
+
+`Inbox` is an optional query filter: omit it or set it to `"*"` for all inboxes, or supply an inbox name/prefix such as `"orders*"`. The request also supports `Skip`, `Limit`, `Sort`, `DecodeSubject`, `Cursor`, `Full`, `Wait`, and `Delete`. Set `Full = true` to request full message content. `Delete` schedules deletion after retrieval (for example, `"30s"`); it is omitted by default.
+
+The result is a `FetchInboxResponse`, sharing the inbox-listing response model and pagination cursor.
+
+### Post a message
+
 Post (inject) a message:
 
 ```csharp

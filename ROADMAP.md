@@ -19,14 +19,14 @@ This document is a living roadmap for the Mailinator C# client. It’s intention
 
 Dependencies were audited on 2026-09-04. All projects have a clean NuGet vulnerability audit, and committed package lock files make restores reproducible.
 
-## Gap Analysis (2026-09-04)
+## Gap Analysis (2026-09-08)
 
 This snapshot compares the SDK’s implemented operations to the Mailinator OpenAPI spec (`mailinator-api.yaml`).
 
 - Spec operations: 35
-- SDK operations: 43
-- Exact matches: 21
-- Missing from SDK: 10
+- SDK operations: 44
+- Exact matches: 22
+- Missing from SDK: 9
 - SDK-only (no spec match): 17
 - SDK aliases / convenience wrappers: 1
 - Path parameter-name mismatches: 4
@@ -42,7 +42,6 @@ Re-run locally:
 Add these operations that exist in the spec but are missing from the SDK:
 
 - **Messages**
-  - `listDomainMessages` — `GET /api/v2/domains/{domain}/inboxes`
   - `getMessageHeaders` — `GET /api/v2/domains/{domain}/messages/{messageId}/headers`
   - `getMessageSummary` — `GET /api/v2/domains/{domain}/messages/{messageId}/summary`
   - `getMessageText` — `GET /api/v2/domains/{domain}/messages/{messageId}/text`
