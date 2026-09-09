@@ -25,6 +25,31 @@ namespace mailinator_csharp_client.Clients.ApiClients.Webhooks
             this.endpointUrl = endpointUrl;
         }
 
+        /// <summary>Injects a message using a webhook token in the domain segment or whtoken query parameter.</summary>
+        public async Task<PostWebhookMessageResponse> PostWebhookMessageAsync(PostWebhookMessageRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/webhook", Method.Post);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddSafeQueryParameter("whtoken", request.WebhookToken);
+            requestObject.AddJsonBody(request.Webhook);
+
+            var response = await httpClient.ExecuteAsync<PostWebhookMessageResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>Injects a message using a webhook token in the domain segment or whtoken query parameter.</summary>
+        public async Task<PostWebhookMessageResponse> PostWebhookInboxMessageAsync(PostWebhookInboxMessageRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/webhook/{inbox}", Method.Post);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("inbox", request.Inbox);
+            requestObject.AddSafeQueryParameter("whtoken", request.WebhookToken);
+            requestObject.AddJsonBody(request.Webhook);
+
+            var response = await httpClient.ExecuteAsync<PostWebhookMessageResponse>(requestObject);
+            return response;
+        }
+
         /// <summary>
         /// This command will Webhook messages into your Private Domain
         /// The incoming Webhook will arrive in the inbox designated by the "to" field in the incoming request payload.
