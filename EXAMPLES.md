@@ -105,6 +105,24 @@ if (!string.IsNullOrEmpty(response.Cursor))
 
 The result is a `FetchInboxResponse`, sharing the inbox-listing response model and pagination cursor.
 
+### Get message headers
+
+```csharp
+using mailinator_csharp_client.Models.Messages.Requests;
+
+// Uses the authenticated client created in Setup.
+var response = await client.MessagesClient.GetMessageHeadersAsync(
+    new GetMessageHeadersRequest
+    {
+        Domain = "your_private_domain.com",
+        MessageId = "your-message-id"
+    });
+
+var headers = response.Headers;
+```
+
+Use a message ID returned by inbox or domain listing. `Headers` is a `Dictionary<string, object>` that preserves custom header names. Values can be strings or JSON arrays (for example, `received`), matching the existing full-message header model.
+
 ### Post a message
 
 Post (inject) a message:

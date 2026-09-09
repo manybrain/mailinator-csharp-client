@@ -24,9 +24,9 @@ Dependencies were audited on 2026-09-04. All projects have a clean NuGet vulnera
 This snapshot compares the SDK’s implemented operations to the Mailinator OpenAPI spec (`mailinator-api.yaml`).
 
 - Spec operations: 35
-- SDK operations: 44
-- Exact matches: 22
-- Missing from SDK: 9
+- SDK operations: 45
+- Exact matches: 23
+- Missing from SDK: 8
 - SDK-only (no spec match): 17
 - SDK aliases / convenience wrappers: 1
 - Path parameter-name mismatches: 4
@@ -42,7 +42,6 @@ Re-run locally:
 Add these operations that exist in the spec but are missing from the SDK:
 
 - **Messages**
-  - `getMessageHeaders` — `GET /api/v2/domains/{domain}/messages/{messageId}/headers`
   - `getMessageSummary` — `GET /api/v2/domains/{domain}/messages/{messageId}/summary`
   - `getMessageText` — `GET /api/v2/domains/{domain}/messages/{messageId}/text`
   - `getMessageTextHtml` — `GET /api/v2/domains/{domain}/messages/{messageId}/texthtml`

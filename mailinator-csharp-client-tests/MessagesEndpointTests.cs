@@ -12,6 +12,30 @@ namespace mailinator_csharp_client_tests
     [TestClass]
     public class MessagesEndpointTests : TestBase
     {
+        [TestMethod, TestCategory("Messages.GetMessageHeadersAsync")]
+        public async Task GetMessageHeadersAsync()
+        {
+            if (string.IsNullOrWhiteSpace(PrivateDomain) || string.IsNullOrWhiteSpace(MessageId))
+                Assert.Inconclusive("Set MAILINATOR_TEST_DOMAIN_PRIVATE and MAILINATOR_TEST_MESSAGE_ID for an existing email.");
+
+            mailinator_csharp_client.Models.Responses.GetMessageHeadersResponse response;
+            try
+            {
+                response = await mailinatorClient.MessagesClient.GetMessageHeadersAsync(
+                    new GetMessageHeadersRequest { Domain = PrivateDomain, MessageId = MessageId });
+            }
+            catch (ApiException exception)
+            {
+                // Do not include potentially sensitive response bodies in test output.
+                Assert.Fail($"Message headers retrieval failed with HTTP status {(int)exception.HttpStatusCode}.");
+                return;
+            }
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Headers);
+            Assert.IsTrue(response.Headers.Count > 0, "The configured email should have SMTP headers.");
+        }
+
         [TestMethod, TestCategory("Messages.ListDomainMessagesAsync")]
         public async Task ListDomainMessagesAsync()
         {
