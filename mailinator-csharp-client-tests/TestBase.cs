@@ -26,6 +26,7 @@ namespace mailinator_csharp_client_tests
         private const string ENV_API_TOKEN = "MAILINATOR_TEST_API_TOKEN";
         private const string ENV_DOMAIN_PRIVATE = "MAILINATOR_TEST_DOMAIN_PRIVATE";
         private const string ENV_INBOX = "MAILINATOR_TEST_INBOX";
+        private const string ENV_MESSAGE_ID = "MAILINATOR_TEST_MESSAGE_ID";
         private const string ENV_PHONE_NUMBER = "MAILINATOR_TEST_PHONE_NUMBER";
         private const string ENV_MESSAGE_WITH_ATTACHMENT_ID = "MAILINATOR_TEST_MESSAGE_WITH_ATTACHMENT_ID";
         private const string ENV_ATTACHMENT_ID = "MAILINATOR_TEST_ATTACHMENT_ID";
@@ -50,6 +51,7 @@ namespace mailinator_csharp_client_tests
             PrivateDomain = GetEnvironmentVariable(ENV_DOMAIN_PRIVATE);
             DeleteDomain = GetEnvironmentVariable(ENV_DELETE_DOMAIN);
             PrivateInbox = GetEnvironmentVariable(ENV_INBOX);
+            MessageId = GetEnvironmentVariable(ENV_MESSAGE_ID);
             InboxAll = "*";
             MessageIdWithAttachment = GetEnvironmentVariable(ENV_MESSAGE_WITH_ATTACHMENT_ID);
             TeamSMSNumber = GetEnvironmentVariable(ENV_PHONE_NUMBER);
@@ -81,6 +83,7 @@ namespace mailinator_csharp_client_tests
         }
 
         protected string PrivateInbox { get; }
+        protected string MessageId { get; }
         protected string PrivateDomain { get; }
         protected string DeleteDomain { get; }
         protected string InboxAll { get; }
