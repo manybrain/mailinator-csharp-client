@@ -12,6 +12,33 @@ namespace mailinator_csharp_client_tests
     [TestClass]
     public class MessagesEndpointTests : TestBase
     {
+        [TestMethod, TestCategory("Messages.GetMessageSummaryAsync")]
+        public async Task GetMessageSummaryAsync()
+        {
+            if (string.IsNullOrWhiteSpace(PrivateDomain) || string.IsNullOrWhiteSpace(MessageId))
+                Assert.Inconclusive("Set MAILINATOR_TEST_DOMAIN_PRIVATE and MAILINATOR_TEST_MESSAGE_ID for an existing email.");
+
+            mailinator_csharp_client.Models.Responses.GetMessageSummaryResponse response;
+            try
+            {
+                response = await mailinatorClient.MessagesClient.GetMessageSummaryAsync(
+                    new GetMessageSummaryRequest { Domain = PrivateDomain, MessageId = MessageId });
+            }
+            catch (ApiException exception)
+            {
+                // Do not include potentially sensitive response bodies in test output.
+                Assert.Fail($"Message summary retrieval failed with HTTP status {(int)exception.HttpStatusCode}.");
+                return;
+            }
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Summary);
+            Assert.IsTrue(response.Summary.Id == MessageId, "The summary should identify the requested message.");
+            Assert.IsTrue(response.Summary.Domain == PrivateDomain, "The summary should identify the requested domain.");
+            Assert.IsNull(response.Summary.Parts);
+            Assert.IsNull(response.Summary.Text);
+        }
+
         [TestMethod, TestCategory("Messages.GetMessageHeadersAsync")]
         public async Task GetMessageHeadersAsync()
         {
