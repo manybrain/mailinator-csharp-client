@@ -21,6 +21,9 @@ An authenticated client exposes `MessagesClient`, `DomainsClient`, `Authenticato
 | `ListDomainMessagesAsync` | `ListDomainMessagesRequest` | `FetchInboxResponse` |
 | `GetMessageHeadersAsync` | `GetMessageHeadersRequest` | `GetMessageHeadersResponse` |
 | `GetMessageSummaryAsync` | `GetMessageSummaryRequest` | `GetMessageSummaryResponse` |
+| `GetMessageTextAsync` | `GetMessageTextRequest` | `GetMessageTextResponse` |
+| `GetMessageTextPlainAsync` | `GetMessageTextPlainRequest` | `GetMessageTextPlainResponse` |
+| `GetMessageTextHtmlAsync` | `GetMessageTextHtmlRequest` | `GetMessageTextHtmlResponse` |
 | `FetchInboxMessageAsync` | `FetchInboxMessageRequest` | `FetchInboxMessageResponse` |
 | `FetchMessageAsync` | `FetchMessageRequest` | `FetchMessageResponse` |
 | `FetchSMSMessagesAsync` | `FetchSMSMessagesRequest` | `FetchSMSMessagesResponse` |
@@ -77,6 +80,8 @@ These operations use webhook tokens rather than the API token supplied to `Maili
 
 | Operation | Request | Response |
 | --- | --- | --- |
+| `PostWebhookMessageAsync` | `PostWebhookMessageRequest` | `PostWebhookMessageResponse` |
+| `PostWebhookInboxMessageAsync` | `PostWebhookInboxMessageRequest` | `PostWebhookMessageResponse` |
 | `PrivateWebhookAsync` | `PrivateWebhookRequest` | `PrivateWebhookResponse` |
 | `PrivateInboxWebhookAsync` | `PrivateInboxWebhookRequest` | `PrivateWebhookResponse` |
 | `PrivateCustomServiceWebhookAsync` | `PrivateCustomServiceWebhookRequest` | `PrivateCustomServiceWebhookResponse` |

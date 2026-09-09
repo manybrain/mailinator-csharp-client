@@ -8,6 +8,10 @@ The format is based on *Keep a Changelog* and this project aims to follow *Seman
 
 ### Added
 
+- Domain and inbox webhook injection via `PostWebhookMessageAsync` and `PostWebhookInboxMessageAsync`, supporting both webhook authentication forms, rich JSON payloads, offline unit tests, and opt-in integration tests.
+
+- `MessagesClient.GetMessageTextAsync`, `GetMessageTextPlainAsync`, and `GetMessageTextHtmlAsync` with request/response models, offline route and JSON deserialization tests, and opt-in read-only integration tests.
+
 - `MessagesClient.GetMessageSummaryAsync` with request/response models, offline request and deserialization tests, and an opt-in live test for an existing email.
 - `MessagesClient.GetMessageHeadersAsync` with request/response models, offline request and deserialization tests, and an opt-in live test for an existing email.
 - `MessagesClient.ListDomainMessagesAsync` and `ListDomainMessagesRequest` for domain-wide message listing, with optional inbox filtering and all documented listing parameters. Returns the existing `FetchInboxResponse` model.

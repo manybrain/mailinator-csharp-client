@@ -60,6 +60,8 @@ To list messages across a domain, use `MessagesClient.ListDomainMessagesAsync(ne
 
 Retrieve message metadata without the body with `MessagesClient.GetMessageSummaryAsync(new GetMessageSummaryRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" })`. See the [message summary example](EXAMPLES.md#get-message-summary).
 
+Retrieve message content with `MessagesClient.GetMessageTextAsync`, `GetMessageTextPlainAsync`, or `GetMessageTextHtmlAsync`. See the [message content examples](EXAMPLES.md#get-message-content).
+
 Retrieve SMTP headers for an existing message with `MessagesClient.GetMessageHeadersAsync(new GetMessageHeadersRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" })`. See the [header retrieval example](EXAMPLES.md#get-message-headers).
 
 - [Mailinator API reference](https://www.mailinator.com/documentation/docs/api/index.html) describes the REST API.
@@ -103,3 +105,5 @@ dotnet test mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-te
 The separate legacy integration suite calls the live Mailinator API and requires deliberate account configuration. Some tests create or delete remote resources. Read [TESTING.md](TESTING.md) before running it.
 
 To compare the SDK request surface with the OpenAPI specification, use the [OpenAPI coverage check](eng/README.md#openapi-coverage-check).
+
+Domain and inbox webhook injection is available through `WebhooksClient.PostWebhookMessageAsync` and `PostWebhookInboxMessageAsync`, using a webhook token with a tokenless `new MailinatorClient()`. See the [webhook examples](EXAMPLES.md#domain-and-inbox-webhooks).

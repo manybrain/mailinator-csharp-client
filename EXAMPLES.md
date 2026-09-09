@@ -283,3 +283,58 @@ var customServiceInboxWebhook = await client.WebhooksClient.PrivateCustomService
 
 - Ensure you’re using an API token from your Mailinator team settings.
 - For webhook injection, use webhook tokens (`whtoken`) instead of your API token.
+
+## Get message content
+
+Use a message ID returned by inbox or domain listing:
+
+```csharp
+var extracted = await client.MessagesClient.GetMessageTextAsync(
+    new GetMessageTextRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" });
+var plain = await client.MessagesClient.GetMessageTextPlainAsync(
+    new GetMessageTextPlainRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" });
+var html = await client.MessagesClient.GetMessageTextHtmlAsync(
+    new GetMessageTextHtmlRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" });
+
+string extractedText = extracted.Text;
+string plainText = plain.TextPlain;
+string htmlBody = html.TextHtml;
+```
+
+These endpoints return JSON wrappers with `text`, `text/plain`, and `text/html` fields respectively. The SDK preserves their content, including HTML markup and any quoted-printable artifacts such as `=C2=A0` in extracted text. Empty strings are preserved. These operations do not delete the message.
+
+## Domain and inbox webhooks
+
+These endpoints authenticate with webhook tokens; no API token is needed. Request types are in `mailinator_csharp_client.Models.Webhooks.Requests` and `WebhookMessage` is in `mailinator_csharp_client.Models.Webhooks.Entities`.
+
+```csharp
+var client = new MailinatorClient();
+var webhookToken = Environment.GetEnvironmentVariable("MAILINATOR_WEBHOOK_TOKEN");
+var payload = new WebhookMessage
+{
+    To = "orders",
+    From = "sender@example.com",
+    Subject = "Order notification",
+    Text = "Order received",
+    Html = "<p>Order received</p>"
+};
+
+var domainResult = await client.WebhooksClient.PostWebhookMessageAsync(
+    new PostWebhookMessageRequest
+    {
+        Domain = "your-private-domain.com",
+        WebhookToken = webhookToken,
+        Webhook = payload
+    });
+
+var inboxResult = await client.WebhooksClient.PostWebhookInboxMessageAsync(
+    new PostWebhookInboxMessageRequest
+    {
+        Domain = "your-private-domain.com",
+        Inbox = "orders",
+        WebhookToken = webhookToken,
+        Webhook = payload
+    });
+```
+
+Both methods also accept the webhook token in `Domain`; omit `WebhookToken` for that form. The payload's `To` field is required by the specification. `Headers` accepts a dictionary of string values, and `AdditionalProperties` accepts custom JSON fields. Both responses expose `Status` and `Id`. Existing private/custom-service webhook methods remain available.

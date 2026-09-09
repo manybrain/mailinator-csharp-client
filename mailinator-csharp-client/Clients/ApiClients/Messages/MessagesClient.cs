@@ -24,6 +24,51 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         }
 
         /// <summary>
+        /// Retrieves text content for a message in a domain.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>Extracted message text, preserving any quoted-printable artifacts returned by the API.</returns>
+        public async Task<GetMessageTextResponse> GetMessageTextAsync(GetMessageTextRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/text", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageTextResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// Retrieves textplain content for a message in a domain.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>The text/plain message body.</returns>
+        public async Task<GetMessageTextPlainResponse> GetMessageTextPlainAsync(GetMessageTextPlainRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/textplain", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageTextPlainResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// Retrieves texthtml content for a message in a domain.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>The text/html message body, preserving HTML markup.</returns>
+        public async Task<GetMessageTextHtmlResponse> GetMessageTextHtmlAsync(GetMessageTextHtmlRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/texthtml", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageTextHtmlResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
         /// Retrieves message metadata without body content.
         /// </summary>
         /// <param name="request">The domain and message ID.</param>
