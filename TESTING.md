@@ -97,7 +97,7 @@ Offline tests cover both authentication forms, request bodies, optional token qu
 dotnet test mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-tests.csproj --filter "FullyQualifiedName~WebhookMessageTests"
 ```
 
-`DomainWebhookEndpointTests` uses process environment variables directly (it does not load `.env` or require an API token). Set `MAILINATOR_TEST_DOMAIN_PRIVATE`, `MAILINATOR_TEST_WEBHOOKTOKEN_PRIVATEDOMAIN`, and `MAILINATOR_TEST_WEBHOOK_INBOX` for a test domain. Set `MAILINATOR_TEST_RUN_WEBHOOKS=1` to opt in. Without the opt-in or required configuration, tests are inconclusive.
+`DomainWebhookEndpointTests` loads the repository `.env` with process environment variables taking precedence. It does not require an API token. Set `MAILINATOR_TEST_DOMAIN_PRIVATE`, `MAILINATOR_TEST_WEBHOOKTOKEN_PRIVATEDOMAIN`, and `MAILINATOR_TEST_WEBHOOK_INBOX` for a test domain. Set `MAILINATOR_TEST_RUN_WEBHOOKS=1` to opt in. Without the opt-in or required configuration, tests are inconclusive.
 
 ```sh
 dotnet test mailinator-csharp-client-tests/mailinator-csharp-client-tests.csproj --filter "FullyQualifiedName~DomainWebhookEndpointTests"
