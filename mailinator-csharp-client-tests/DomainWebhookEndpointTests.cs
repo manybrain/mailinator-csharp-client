@@ -12,6 +12,12 @@ namespace mailinator_csharp_client_tests
     [TestClass]
     public class DomainWebhookEndpointTests
     {
+        [TestInitialize]
+        public void LoadConfiguration()
+        {
+            TestEnvironment.LoadDotEnv();
+        }
+
         [TestMethod, TestCategory("Webhooks.PostWebhookMessageAsync")]
         [DataRow(false)]
         [DataRow(true)]
