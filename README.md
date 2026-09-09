@@ -58,6 +58,8 @@ To list messages across a domain, use `MessagesClient.ListDomainMessagesAsync(ne
 
 ## API reference
 
+Retrieve message metadata without the body with `MessagesClient.GetMessageSummaryAsync(new GetMessageSummaryRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" })`. See the [message summary example](EXAMPLES.md#get-message-summary).
+
 Retrieve SMTP headers for an existing message with `MessagesClient.GetMessageHeadersAsync(new GetMessageHeadersRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" })`. See the [header retrieval example](EXAMPLES.md#get-message-headers).
 
 - [Mailinator API reference](https://www.mailinator.com/documentation/docs/api/index.html) describes the REST API.

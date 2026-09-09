@@ -24,6 +24,21 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         }
 
         /// <summary>
+        /// Retrieves message metadata without body content.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>The message summary.</returns>
+        public async Task<GetMessageSummaryResponse> GetMessageSummaryAsync(GetMessageSummaryRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/summary", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageSummaryResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
         /// Retrieves SMTP headers for a message in a domain.
         /// </summary>
         /// <param name="request">The domain and message ID.</param>

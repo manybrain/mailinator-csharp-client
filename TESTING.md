@@ -33,7 +33,7 @@ The `.env` file is excluded from Git. Process environment variables take precede
 | `MAILINATOR_TEST_API_TOKEN` | API token used by authenticated integration tests. |
 | `MAILINATOR_TEST_DOMAIN_PRIVATE` | Private domain used by domain and message tests. |
 | `MAILINATOR_TEST_INBOX` | Existing inbox in the configured private domain. |
-| `MAILINATOR_TEST_MESSAGE_ID` | Existing email with SMTP headers in the configured private domain, for `GetMessageHeadersAsync`. |
+| `MAILINATOR_TEST_MESSAGE_ID` | Existing email in the configured private domain, for `GetMessageHeadersAsync` and `GetMessageSummaryAsync`. Header retrieval requires SMTP headers. |
 | `MAILINATOR_TEST_PHONE_NUMBER` | Team SMS number whose messages can be fetched. |
 | `MAILINATOR_TEST_MESSAGE_WITH_ATTACHMENT_ID` | ID of an existing message that has an attachment. |
 | `MAILINATOR_TEST_ATTACHMENT_ID` | Attachment ID belonging to the configured message. |
@@ -60,3 +60,9 @@ dotnet test mailinator-csharp-client-tests/mailinator-csharp-client-tests.csproj
 ```
 
 Use an existing email received through SMTP with headers; an attachment is not required. This test only reads the message headers and does not create or delete messages. Missing configuration marks the test inconclusive.
+
+Summary retrieval uses the same three environment variables and reads the existing message without creating or deleting data:
+
+```sh
+dotnet test mailinator-csharp-client-tests/mailinator-csharp-client-tests.csproj --filter "FullyQualifiedName=mailinator_csharp_client_tests.MessagesEndpointTests.GetMessageSummaryAsync"
+```

@@ -20,6 +20,7 @@ An authenticated client exposes `MessagesClient`, `DomainsClient`, `Authenticato
 | `FetchInboxAsync` | `FetchInboxRequest` | `FetchInboxResponse` |
 | `ListDomainMessagesAsync` | `ListDomainMessagesRequest` | `FetchInboxResponse` |
 | `GetMessageHeadersAsync` | `GetMessageHeadersRequest` | `GetMessageHeadersResponse` |
+| `GetMessageSummaryAsync` | `GetMessageSummaryRequest` | `GetMessageSummaryResponse` |
 | `FetchInboxMessageAsync` | `FetchInboxMessageRequest` | `FetchInboxMessageResponse` |
 | `FetchMessageAsync` | `FetchMessageRequest` | `FetchMessageResponse` |
 | `FetchSMSMessagesAsync` | `FetchSMSMessagesRequest` | `FetchSMSMessagesResponse` |

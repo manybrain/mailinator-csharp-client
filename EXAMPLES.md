@@ -105,6 +105,24 @@ if (!string.IsNullOrEmpty(response.Cursor))
 
 The result is a `FetchInboxResponse`, sharing the inbox-listing response model and pagination cursor.
 
+### Get message summary
+
+```csharp
+using mailinator_csharp_client.Models.Messages.Requests;
+
+// Uses the authenticated client created in Setup.
+var response = await client.MessagesClient.GetMessageSummaryAsync(
+    new GetMessageSummaryRequest
+    {
+        Domain = "your_private_domain.com",
+        MessageId = "your-message-id"
+    });
+
+var summary = response.Summary;
+```
+
+`Summary` reuses the `Message` model and contains the subject, domain, sender (`From`), message ID, recipient (`To`), and timestamp (`Time`). This endpoint does not return body or attachment content.
+
 ### Get message headers
 
 ```csharp
