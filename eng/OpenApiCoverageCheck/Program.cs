@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Reader;
 
 const string DefaultSpecUrl = "https://raw.githubusercontent.com/manybrain/mailinatordocs/main/openapi/mailinator-api.yaml";
 
@@ -136,27 +136,33 @@ static async Task<LoadedSpec> LoadSpecAsync(Options options)
         ? File.OpenRead(options.SpecPath)
         : await httpClient.GetStreamAsync(source);
 
-    var document = new OpenApiStreamReader().Read(stream, out var diagnostic);
-    if (diagnostic.Errors.Count > 0)
+    var settings = new OpenApiReaderSettings();
+    settings.AddYamlReader();
+    var (document, diagnostic) = await OpenApiDocument.LoadAsync(stream, settings: settings);
+    if (diagnostic?.Errors.Count > 0)
     {
         var errors = string.Join(Environment.NewLine, diagnostic.Errors.Select(error => $"  - {error.Message}"));
         throw new InvalidOperationException($"Unable to parse OpenAPI document:{Environment.NewLine}{errors}");
     }
 
-    return new LoadedSpec(document, source);
+    return new LoadedSpec(document ?? throw new InvalidOperationException("Unable to parse OpenAPI document."), source);
 }
 
 static IEnumerable<ApiOperation> GetOpenApiOperations(OpenApiDocument document)
 {
     foreach (var path in document.Paths)
     {
+        if (path.Value.Operations is null)
+        {
+            continue;
+        }
+
         foreach (var operation in path.Value.Operations)
         {
-            var pathParameters = path.Value.Parameters ?? Enumerable.Empty<OpenApiParameter>();
-            var operationParameters = operation.Value.Parameters ?? Enumerable.Empty<OpenApiParameter>();
-            var parameters = pathParameters
-                .Concat(operationParameters)
-                .Select(parameter => ResolveParameter(document, parameter));
+            var pathParameters = path.Value.Parameters ?? Enumerable.Empty<IOpenApiParameter>();
+            var operationParameters = operation.Value.Parameters ?? Enumerable.Empty<IOpenApiParameter>();
+            // OpenAPI.NET resolves component references through IOpenApiParameter proxies.
+            var parameters = pathParameters.Concat(operationParameters);
 
             yield return new ApiOperation(
                 Method: operation.Key.ToString().ToUpperInvariant(),
@@ -164,26 +170,15 @@ static IEnumerable<ApiOperation> GetOpenApiOperations(OpenApiDocument document)
                 OperationId: operation.Value.OperationId,
                 QueryParams: parameters
                     .Where(parameter => parameter.In == ParameterLocation.Query)
-                    .Select(parameter => parameter.Name)
+                    .Select(parameter => parameter.Name!)
                     .ToHashSet(StringComparer.Ordinal),
                 PathParams: parameters
                     .Where(parameter => parameter.In == ParameterLocation.Path)
-                    .Select(parameter => parameter.Name)
+                    .Select(parameter => parameter.Name!)
                     .ToHashSet(StringComparer.Ordinal),
                 Source: "OpenAPI");
         }
     }
-}
-
-static OpenApiParameter ResolveParameter(OpenApiDocument document, OpenApiParameter parameter)
-{
-    if (parameter.Reference?.Id is { Length: > 0 } referenceId &&
-        document.Components?.Parameters.TryGetValue(referenceId, out var referencedParameter) == true)
-    {
-        return referencedParameter;
-    }
-
-    return parameter;
 }
 
 static IEnumerable<ApiOperation> GetCSharpOperations(string clientRoot)
