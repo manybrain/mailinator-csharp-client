@@ -40,7 +40,7 @@ namespace mailinator_csharp_client_unit_tests
 
             AssertRequest(httpClient, Method.Get, "domains/{domain}/inboxes",
                 "domain", "example.com", "inbox", "orders*", "skip", "10", "limit", "20",
-                "sort", "asc", "decode_subject", "True", "cursor", "next+page=",
+                "sort", "ascending", "decode_subject", "True", "cursor", "next+page=",
                 "full", "True", "delete", "30s", "wait", "10s");
             Assert.AreEqual(9, httpClient.Request.Parameters.Count(p => p.Type == ParameterType.QueryString));
             Assert.AreEqual(ParameterType.QueryString, httpClient.Request.Parameters.Single(p => p.Name == "inbox").Type);
@@ -56,7 +56,7 @@ namespace mailinator_csharp_client_unit_tests
             await client.ListDomainMessagesAsync(new ListDomainMessagesRequest());
 
             AssertRequest(httpClient, Method.Get, "domains/{domain}/inboxes",
-                "domain", "private", "skip", "0", "limit", "50", "sort", "desc", "decode_subject", "False");
+                "domain", "private", "skip", "0", "limit", "50", "sort", "descending", "decode_subject", "False");
             CollectionAssert.AreEquivalent(new[] { "skip", "limit", "sort", "decode_subject" },
                 httpClient.Request.Parameters.Where(p => p.Type == ParameterType.QueryString).Select(p => p.Name).ToArray());
         }
@@ -112,12 +112,23 @@ namespace mailinator_csharp_client_unit_tests
             Assert.AreEqual("orders", ParameterValue(httpClient.Request, "inbox"));
             Assert.AreEqual("10", ParameterValue(httpClient.Request, "skip"));
             Assert.AreEqual("20", ParameterValue(httpClient.Request, "limit"));
-            Assert.AreEqual("asc", ParameterValue(httpClient.Request, "sort"));
+            Assert.AreEqual("ascending", ParameterValue(httpClient.Request, "sort"));
             Assert.AreEqual("True", ParameterValue(httpClient.Request, "decode_subject"));
             Assert.AreEqual("next-page", ParameterValue(httpClient.Request, "cursor"));
             Assert.AreEqual("True", ParameterValue(httpClient.Request, "full"));
             Assert.AreEqual("30s", ParameterValue(httpClient.Request, "delete"));
             Assert.AreEqual("10s", ParameterValue(httpClient.Request, "wait"));
+        }
+
+        [TestMethod]
+        public async Task FetchInboxAsync_DefaultsToDescendingSort()
+        {
+            var httpClient = new RecordingHttpClient();
+            var client = new MessagesClient(httpClient, "domains");
+
+            await client.FetchInboxAsync(new FetchInboxRequest { Inbox = "orders" });
+
+            Assert.AreEqual("descending", ParameterValue(httpClient.Request, "sort"));
         }
 
         [TestMethod]

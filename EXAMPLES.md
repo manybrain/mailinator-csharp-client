@@ -41,6 +41,10 @@ var request = new FetchInboxRequest
 var response = await client.MessagesClient.FetchInboxAsync(request);
 ```
 
+Use `Sort.asc` for ascending order or `Sort.desc` for descending order (the default). In version 2.0.0, both `FetchInboxAsync` and `ListDomainMessagesAsync` serialize these as the API query values `ascending` and `descending`.
+
+For dependency migration steps, see [upgrading from 1.0.7 to 2.0.0](README.md#upgrading-from-107-to-200).
+
 ## Authenticators
 
 Instant TOTP code + get a stored authenticator:
