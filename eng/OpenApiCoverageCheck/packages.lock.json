@@ -2,20 +2,20 @@
   "version": 1,
   "dependencies": {
     "net8.0": {
-      "Microsoft.OpenApi.Readers": {
+      "Microsoft.OpenApi.YamlReader": {
         "type": "Direct",
-        "requested": "[1.6.31, )",
-        "resolved": "1.6.31",
-        "contentHash": "MbtHhR2vYs11EE71ywvmyppzp0noC3XHKzdI6m/9mwKRzw4IVCGuHHWDnmjr1BX90CIOOxbz6WszBJt3a+WGBg==",
+        "requested": "[3.10.2, )",
+        "resolved": "3.10.2",
+        "contentHash": "qVWoRH8gBWcs2C67e5crYLXPPqK3O8VbzN9G4nxC3Ykjv+Vjv6BJZXx9WyAohe2UT5ZOkHr4LdLJ/ZpaptWdZQ==",
         "dependencies": {
-          "Microsoft.OpenApi": "1.6.31",
+          "Microsoft.OpenApi": "3.10.2",
           "SharpYaml": "2.1.5"
         }
       },
       "Microsoft.OpenApi": {
         "type": "Transitive",
-        "resolved": "1.6.31",
-        "contentHash": "58ggc22i0BKvHuVoj5oVVQ7EbMkEMY0FvGeoQ/yBemk36pUbroDoj1XxRTnCi+fsgDTDuf+YZmigHkEzs5B2wA=="
+        "resolved": "3.10.2",
+        "contentHash": "qzg4a3WmgQm28Azaporbnsu+KHA+vq5sgpQQFLiJgB06Rra2S+kzGAU7pzUB8/UIwZJCSCY2JEE/M5e0hQ2K8w=="
       },
       "SharpYaml": {
         "type": "Transitive",
