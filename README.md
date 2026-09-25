@@ -1,8 +1,12 @@
 # Mailinator C# SDK
 
-The official C# SDK for the [Mailinator API](https://www.mailinator.com/documentation/docs/api/index.html). This package is a thin, asynchronous wrapper around the Mailinator REST API, and the [Mailinator OpenAPI specification](https://github.com/manybrain/mailinatordocs/blob/main/openapi/mailinator-api.yaml) is the source of truth for documented endpoints.
+The official Mailinator C# SDK. This package is a thin, asynchronous wrapper around the Mailinator REST API, and the [Mailinator OpenAPI specification](https://github.com/manybrain/mailinatordocs/blob/main/openapi/mailinator-api.yaml) is the source of truth for documented endpoints.
 
 The SDK targets .NET Framework 4.7.1 and .NET Standard 2.0.
+
+## API Reference
+
+See [Mailinator API Reference](https://www.mailinator.com/documentation/docs/api/index.html) for all of the currently available API endpoints. 
 
 ## Installation
 
