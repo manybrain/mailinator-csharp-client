@@ -1,5 +1,6 @@
 ﻿using mailinator_csharp_client.Clients.HttpClient;
 using mailinator_csharp_client.Helpers;
+using mailinator_csharp_client.Models.Messages.Entities;
 using mailinator_csharp_client.Models.Messages.Requests;
 using mailinator_csharp_client.Models.Responses;
 using RestSharp;
@@ -21,6 +22,16 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
         {
             this.httpClient = httpClient;
             this.endpointUrl = endpointUrl;
+        }
+
+        private static string SerializeSort(Sort sort)
+        {
+            switch (sort)
+            {
+                case Sort.asc: return "ascending";
+                case Sort.desc: return "descending";
+                default: throw new ArgumentOutOfRangeException(nameof(sort), sort, "Unsupported sort order.");
+            }
         }
 
         /// <summary>
@@ -110,7 +121,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             requestObject.AddSafeQueryParameter("inbox", request.Inbox);
             requestObject.AddSafeQueryParameter("skip", request.Skip.ToString());
             requestObject.AddSafeQueryParameter("limit", request.Limit.ToString());
-            requestObject.AddSafeQueryParameter("sort", request.Sort.ToString());
+            requestObject.AddSafeQueryParameter("sort", SerializeSort(request.Sort));
             requestObject.AddSafeQueryParameter("decode_subject", request.DecodeSubject.ToString());
             requestObject.AddSafeQueryParameter("cursor", request.Cursor);
             requestObject.AddSafeQueryParameter("full", request.Full?.ToString());
@@ -142,7 +153,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddSafeQueryParameter("skip", request.Skip.ToString());
             requestObject.AddSafeQueryParameter("limit", request.Limit.ToString());
-            requestObject.AddSafeQueryParameter("sort", request.Sort.ToString());
+            requestObject.AddSafeQueryParameter("sort", SerializeSort(request.Sort));
             requestObject.AddSafeQueryParameter("decode_subject", request.DecodeSubject.ToString());
             requestObject.AddSafeQueryParameter("cursor", request.Cursor?.ToString());
             requestObject.AddSafeQueryParameter("full", request.Full?.ToString());

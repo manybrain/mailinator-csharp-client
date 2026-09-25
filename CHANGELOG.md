@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on *Keep a Changelog* and this project aims to follow *Semantic Versioning*.
 
-## [1.0.8] - TBD
+## [2.0.0] - TBD
+
+### Breaking changes
+
+- Upgraded RestSharp from `112.0.0` to `114.0.0`. The SDK exposes RestSharp types through its public API, including `IHttpClient` and `DynamicJsonSerializer`, so this release requires a major version bump from `1.0.7`. Rebuild consuming applications and libraries, align direct RestSharp references with `114.0.0`, and review the [migration guidance](README.md#upgrading-from-107-to-200).
 
 ### Added
 
@@ -37,6 +41,7 @@ The format is based on *Keep a Changelog* and this project aims to follow *Seman
 
 ### Fixed
 
+- Corrected sort query serialization in `ListDomainMessagesAsync` and `FetchInboxAsync`: `Sort.asc` sends `ascending` and `Sort.desc` sends `descending`, matching the OpenAPI contract. Public enum names remain unchanged. Added offline regression coverage for both sort directions on both methods.
 - Forwarded the optional `delete` query parameter in `FetchInboxMessageAsync`.
 
 

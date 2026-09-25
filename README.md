@@ -24,6 +24,19 @@ PackageReference:
 <PackageReference Include="MailinatorApiClient" Version="YOUR_VERSION" />
 ```
 
+## Upgrading from 1.0.7 to 2.0.0
+
+Version 2.0.0 upgrades RestSharp from 112.0.0 to 114.0.0. RestSharp types are part of this SDK's public API, including `IHttpClient` and `DynamicJsonSerializer`, so consumers must account for RestSharp's breaking changes:
+
+- Align any direct RestSharp references with 114.0.0 and rebuild consuming applications and libraries.
+- If you implement RestSharp's `IAuthenticator`, update `Authenticate` to accept the optional `CancellationToken` parameter.
+- If you access `ReadOnlyRestClientOptions.FollowRedirects` or `MaxRedirects`, migrate to `RedirectOptions`.
+- Recompile code using RestSharp's generic parameter extension methods, whose signatures now include an optional culture parameter.
+
+See the [RestSharp 114 changelog](https://restsharp.dev/docs/changelog/) for details. The SDK continues to target .NET Framework 4.7.1 and .NET Standard 2.0.
+
+Message listing now sends the documented `ascending` and `descending` sort query values. Continue using `Sort.asc` and `Sort.desc` in C#.
+
 ## Quick start
 
 Create a Mailinator account, then obtain an API token from **Team Settings > API Tokens**. Keep the token outside your source code—for example, in an environment variable.
