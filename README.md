@@ -72,7 +72,6 @@ For complete workflows, including domain message listing, message content, heade
 ## Documentation
 
 - [Mailinator API reference](https://www.mailinator.com/documentation/docs/api/index.html) describes the REST API.
-- [REFERENCE.md](REFERENCE.md) maps the operations exposed by this SDK to their request and response types and identifies deprecated operations.
 - [EXAMPLES.md](EXAMPLES.md) contains examples for common SDK workflows.
 
 ## Authentication
@@ -93,7 +92,7 @@ See the [webhook examples](EXAMPLES.md#webhooks) for complete requests.
 
 ## Deprecated APIs
 
-Some older SDK operations do not appear in the current OpenAPI specification. They remain available for compatibility but are marked with `[Obsolete]` and may be removed in a future major release. See the deprecation notes in [REFERENCE.md](REFERENCE.md#deprecated-operations) and the alignment work in [ROADMAP.md](ROADMAP.md).
+Some older SDK operations do not appear in the current OpenAPI specification. They remain available for compatibility but are marked with `[Obsolete]` and may be removed in a future major release. See the compatibility decisions in [ROADMAP.md](ROADMAP.md#resolved-compatibility-decisions).
 
 ## Development
 

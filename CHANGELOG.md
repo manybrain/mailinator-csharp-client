@@ -37,6 +37,10 @@ The format is based on *Keep a Changelog* and this project aims to follow *Seman
 - Refreshed NuGet lock files for the updated direct and transitive dependencies.
 - Updated the README with an API reference link and migration guidance from `1.0.7` to `2.0.0`; clarified sort query values in the examples. SDK target frameworks remain .NET Framework 4.7.1 and .NET Standard 2.0.
 
+### Removed
+
+- Removed the manually maintained `REFERENCE.md`; use the README, examples, and Mailinator API reference instead.
+
 ### Deprecated
 
 - `AuthenticatorsClient.GetAuthenticatorsAsync`, `GetAuthenticatorAsync`, and `GetAuthenticatorByIdAsync`; use `GetAuthenticatorsByIdAsync` for the documented stored-authenticator operation.
