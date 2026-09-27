@@ -4,10 +4,6 @@ The official Mailinator C# SDK. This package is a thin, asynchronous wrapper aro
 
 The SDK targets .NET Framework 4.7.1 and .NET Standard 2.0.
 
-## API Reference
-
-See [Mailinator API Reference](https://www.mailinator.com/documentation/docs/api/index.html) for all of the currently available API endpoints. 
-
 ## Installation
 
 Install the `MailinatorApiClient` package from [NuGet](https://www.nuget.org/packages/MailinatorApiClient):
@@ -71,18 +67,12 @@ var response = await client.MessagesClient.FetchInboxAsync(
 
 All API operations are asynchronous and end in `Async`. Operations are grouped under `MessagesClient`, `DomainsClient`, `AuthenticatorsClient`, `StatsClient`, `WebhooksClient`, and `RulesClient`.
 
-To list messages across a domain, use `MessagesClient.ListDomainMessagesAsync(new ListDomainMessagesRequest { Domain = "your-private-domain.com" })`. The optional `Inbox` query filter scopes results to an inbox; omit it to include all inboxes. See the [domain listing example](EXAMPLES.md#list-domain-messages) for pagination.
+For complete workflows, including domain message listing, message content, headers, attachments, and webhooks, see [EXAMPLES.md](EXAMPLES.md).
 
-## API reference
-
-Retrieve message metadata without the body with `MessagesClient.GetMessageSummaryAsync(new GetMessageSummaryRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" })`. See the [message summary example](EXAMPLES.md#get-message-summary).
-
-Retrieve message content with `MessagesClient.GetMessageTextAsync`, `GetMessageTextPlainAsync`, or `GetMessageTextHtmlAsync`. See the [message content examples](EXAMPLES.md#get-message-content).
-
-Retrieve SMTP headers for an existing message with `MessagesClient.GetMessageHeadersAsync(new GetMessageHeadersRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" })`. See the [header retrieval example](EXAMPLES.md#get-message-headers).
+## Documentation
 
 - [Mailinator API reference](https://www.mailinator.com/documentation/docs/api/index.html) describes the REST API.
-- [REFERENCE.md](REFERENCE.md) lists the operations currently exposed by this SDK.
+- [REFERENCE.md](REFERENCE.md) maps the operations exposed by this SDK to their request and response types and identifies deprecated operations.
 - [EXAMPLES.md](EXAMPLES.md) contains examples for common SDK workflows.
 
 ## Authentication
@@ -122,5 +112,3 @@ dotnet test mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-te
 The separate legacy integration suite calls the live Mailinator API and requires deliberate account configuration. Some tests create or delete remote resources. Read [TESTING.md](TESTING.md) before running it.
 
 To compare the SDK request surface with the OpenAPI specification, use the [OpenAPI coverage check](eng/README.md#openapi-coverage-check).
-
-Domain and inbox webhook injection is available through `WebhooksClient.PostWebhookMessageAsync` and `PostWebhookInboxMessageAsync`, using a webhook token with a tokenless `new MailinatorClient()`. See the [webhook examples](EXAMPLES.md#domain-and-inbox-webhooks).
