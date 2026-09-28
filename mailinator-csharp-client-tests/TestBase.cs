@@ -1,4 +1,4 @@
-﻿using mailinator_csharp_client;
+using mailinator_csharp_client;
 using mailinator_csharp_client.Models.Domains.Entities;
 using mailinator_csharp_client.Models.Domains.Requests;
 using mailinator_csharp_client.Models.Domains.Responses;
@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 
 namespace mailinator_csharp_client_tests
 {
-    [TestClass]
     public class TestBase
     {
         protected MailinatorClient mailinatorClient;
@@ -27,6 +26,7 @@ namespace mailinator_csharp_client_tests
         private const string ENV_API_TOKEN = "MAILINATOR_TEST_API_TOKEN";
         private const string ENV_DOMAIN_PRIVATE = "MAILINATOR_TEST_DOMAIN_PRIVATE";
         private const string ENV_INBOX = "MAILINATOR_TEST_INBOX";
+        private const string ENV_MESSAGE_ID = "MAILINATOR_TEST_MESSAGE_ID";
         private const string ENV_PHONE_NUMBER = "MAILINATOR_TEST_PHONE_NUMBER";
         private const string ENV_MESSAGE_WITH_ATTACHMENT_ID = "MAILINATOR_TEST_MESSAGE_WITH_ATTACHMENT_ID";
         private const string ENV_ATTACHMENT_ID = "MAILINATOR_TEST_ATTACHMENT_ID";
@@ -42,7 +42,7 @@ namespace mailinator_csharp_client_tests
 
         static TestBase()
         {
-            LoadDotEnv();
+            TestEnvironment.LoadDotEnv();
             ApiToken = GetEnvironmentVariable(ENV_API_TOKEN);
         }
 
@@ -51,6 +51,7 @@ namespace mailinator_csharp_client_tests
             PrivateDomain = GetEnvironmentVariable(ENV_DOMAIN_PRIVATE);
             DeleteDomain = GetEnvironmentVariable(ENV_DELETE_DOMAIN);
             PrivateInbox = GetEnvironmentVariable(ENV_INBOX);
+            MessageId = GetEnvironmentVariable(ENV_MESSAGE_ID);
             InboxAll = "*";
             MessageIdWithAttachment = GetEnvironmentVariable(ENV_MESSAGE_WITH_ATTACHMENT_ID);
             TeamSMSNumber = GetEnvironmentVariable(ENV_PHONE_NUMBER);
@@ -82,6 +83,7 @@ namespace mailinator_csharp_client_tests
         }
 
         protected string PrivateInbox { get; }
+        protected string MessageId { get; }
         protected string PrivateDomain { get; }
         protected string DeleteDomain { get; }
         protected string InboxAll { get; }
@@ -163,51 +165,5 @@ namespace mailinator_csharp_client_tests
             return Environment.GetEnvironmentVariable(name);
         }
 
-        private static void LoadDotEnv()
-        {
-            var dotEnvPath = FindDotEnv(Environment.CurrentDirectory) ?? FindDotEnv(AppDomain.CurrentDomain.BaseDirectory);
-            if (dotEnvPath == null)
-                return;
-
-            foreach (var line in File.ReadAllLines(dotEnvPath))
-            {
-                var trimmedLine = line.Trim();
-                if (trimmedLine.Length == 0 || trimmedLine.StartsWith("#"))
-                    continue;
-
-                if (trimmedLine.StartsWith("export "))
-                    trimmedLine = trimmedLine.Substring("export ".Length).TrimStart();
-
-                var separatorIndex = trimmedLine.IndexOf('=');
-                if (separatorIndex <= 0)
-                    continue;
-
-                var name = trimmedLine.Substring(0, separatorIndex).Trim();
-                var value = trimmedLine.Substring(separatorIndex + 1).Trim();
-                if (value.Length >= 2 && ((value.StartsWith("\"") && value.EndsWith("\"")) || (value.StartsWith("'") && value.EndsWith("'"))))
-                    value = value.Substring(1, value.Length - 2);
-
-                if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(name)))
-                    Environment.SetEnvironmentVariable(name, value);
-            }
-        }
-
-        private static string FindDotEnv(string startDirectory)
-        {
-            if (string.IsNullOrWhiteSpace(startDirectory))
-                return null;
-
-            var directory = new DirectoryInfo(startDirectory);
-            while (directory != null)
-            {
-                var path = Path.Combine(directory.FullName, ".env");
-                if (File.Exists(path))
-                    return path;
-
-                directory = directory.Parent;
-            }
-
-            return null;
-        }
     }
 }

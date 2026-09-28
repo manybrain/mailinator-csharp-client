@@ -41,6 +41,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Authenticators
         /// Fetch Authenticators
         /// </summary>
         /// <returns></returns>
+        [System.Obsolete("Deprecated: This authenticator list endpoint is not present in the current Mailinator OpenAPI spec. Use GetAuthenticatorsByIdAsync for the documented stored-authenticator operation. This method may be removed in a future major release.")]
         public async Task<GetAuthenticatorsResponse> GetAuthenticatorsAsync()
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "authenticators", Method.Get);
@@ -69,6 +70,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Authenticators
         /// Fetch Authenticator
         /// </summary>
         /// <returns></returns>
+        [System.Obsolete("Deprecated: This authenticator endpoint is not present in the current Mailinator OpenAPI spec. Use GetAuthenticatorsByIdAsync for the documented stored-authenticator operation. This method may be removed in a future major release.")]
         public async Task<GetAuthenticatorResponse> GetAuthenticatorAsync()
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "authenticator", Method.Get);
@@ -82,6 +84,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Authenticators
         /// </summary>
         /// <param name="request">GetAuthenticatorByIdRequest object.</param>
         /// <returns></returns>
+        [System.Obsolete("Deprecated: This authenticator endpoint is not present in the current Mailinator OpenAPI spec. Use GetAuthenticatorsByIdAsync for the documented stored-authenticator operation. This method may be removed in a future major release.")]
         public async Task<GetAuthenticatorByIdResponse> GetAuthenticatorByIdAsync(GetAuthenticatorByIdRequest request)
         {
             var requestObject = httpClient.GetRequest(endpointUrl + "authenticator/{auth_id}", Method.Get);

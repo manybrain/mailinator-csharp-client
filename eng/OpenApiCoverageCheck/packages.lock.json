@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net8.0": {
+      "Microsoft.OpenApi.YamlReader": {
+        "type": "Direct",
+        "requested": "[3.10.2, )",
+        "resolved": "3.10.2",
+        "contentHash": "qVWoRH8gBWcs2C67e5crYLXPPqK3O8VbzN9G4nxC3Ykjv+Vjv6BJZXx9WyAohe2UT5ZOkHr4LdLJ/ZpaptWdZQ==",
+        "dependencies": {
+          "Microsoft.OpenApi": "3.10.2",
+          "SharpYaml": "2.1.5"
+        }
+      },
+      "Microsoft.OpenApi": {
+        "type": "Transitive",
+        "resolved": "3.10.2",
+        "contentHash": "qzg4a3WmgQm28Azaporbnsu+KHA+vq5sgpQQFLiJgB06Rra2S+kzGAU7pzUB8/UIwZJCSCY2JEE/M5e0hQ2K8w=="
+      },
+      "SharpYaml": {
+        "type": "Transitive",
+        "resolved": "2.1.5",
+        "contentHash": "1pNSpfXxNAgCQ9sacKKpEWO2DxTefoLEjw0v1nWMvyJScUWacoHvjXr4LfcUkhm0qYgNYripFFiUeEzW4tdXIQ=="
+      }
+    }
+  }
+}
