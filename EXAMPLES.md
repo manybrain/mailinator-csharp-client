@@ -41,9 +41,13 @@ var request = new FetchInboxRequest
 var response = await client.MessagesClient.FetchInboxAsync(request);
 ```
 
+Use `Sort.asc` for ascending order or `Sort.desc` for descending order (the default). In version 2.0.0, both `FetchInboxAsync` and `ListDomainMessagesAsync` serialize these as the API query values `ascending` and `descending`.
+
+For dependency migration steps, see [upgrading from 1.0.7 to 2.0.0](README.md#upgrading-from-107-to-200).
+
 ## Authenticators
 
-Instant TOTP code + list authenticators:
+Instant TOTP code + get a stored authenticator:
 
 ```csharp
 using mailinator_csharp_client;
@@ -53,8 +57,6 @@ var client = new MailinatorClient("yourApiTokenHere");
 
 var totp = await client.AuthenticatorsClient.InstantTOTP2FACodeAsync(
     new InstantTOTP2FACodeRequest { TotpSecretKey = "yourAuthSecret" });
-
-var authenticators = await client.AuthenticatorsClient.GetAuthenticatorsAsync();
 
 var byId = await client.AuthenticatorsClient.GetAuthenticatorsByIdAsync(
     new GetAuthenticatorsByIdRequest { Id = "yourAuthId" });
@@ -77,6 +79,73 @@ var domain = await client.DomainsClient.GetDomainAsync(
 ```
 
 ## Messages
+
+### List domain messages
+
+List messages across all inboxes in a domain:
+
+```csharp
+using mailinator_csharp_client.Models.Messages.Requests;
+
+// Uses the authenticated client created in Setup.
+var request = new ListDomainMessagesRequest
+{
+    Domain = "your_private_domain.com",
+    Limit = 20
+};
+
+var response = await client.MessagesClient.ListDomainMessagesAsync(request);
+var messages = response.Messages;
+
+// Fetch the next page only when the API supplies a cursor.
+if (!string.IsNullOrEmpty(response.Cursor))
+{
+    request.Cursor = response.Cursor;
+    var nextPage = await client.MessagesClient.ListDomainMessagesAsync(request);
+}
+```
+
+`Inbox` is an optional query filter: omit it or set it to `"*"` for all inboxes, or supply an inbox name/prefix such as `"orders*"`. The request also supports `Skip`, `Limit`, `Sort`, `DecodeSubject`, `Cursor`, `Full`, `Wait`, and `Delete`. Set `Full = true` to request full message content. `Delete` schedules deletion after retrieval (for example, `"30s"`); it is omitted by default.
+
+The result is a `FetchInboxResponse`, sharing the inbox-listing response model and pagination cursor.
+
+### Get message summary
+
+```csharp
+using mailinator_csharp_client.Models.Messages.Requests;
+
+// Uses the authenticated client created in Setup.
+var response = await client.MessagesClient.GetMessageSummaryAsync(
+    new GetMessageSummaryRequest
+    {
+        Domain = "your_private_domain.com",
+        MessageId = "your-message-id"
+    });
+
+var summary = response.Summary;
+```
+
+`Summary` reuses the `Message` model and contains the subject, domain, sender (`From`), message ID, recipient (`To`), and timestamp (`Time`). This endpoint does not return body or attachment content.
+
+### Get message headers
+
+```csharp
+using mailinator_csharp_client.Models.Messages.Requests;
+
+// Uses the authenticated client created in Setup.
+var response = await client.MessagesClient.GetMessageHeadersAsync(
+    new GetMessageHeadersRequest
+    {
+        Domain = "your_private_domain.com",
+        MessageId = "your-message-id"
+    });
+
+var headers = response.Headers;
+```
+
+Use a message ID returned by inbox or domain listing. `Headers` is a `Dictionary<string, object>` that preserves custom header names. Values can be strings or JSON arrays (for example, `received`), matching the existing full-message header model.
+
+### Post a message
 
 Post (inject) a message:
 
@@ -218,3 +287,58 @@ var customServiceInboxWebhook = await client.WebhooksClient.PrivateCustomService
 
 - Ensure you’re using an API token from your Mailinator team settings.
 - For webhook injection, use webhook tokens (`whtoken`) instead of your API token.
+
+## Get message content
+
+Use a message ID returned by inbox or domain listing:
+
+```csharp
+var extracted = await client.MessagesClient.GetMessageTextAsync(
+    new GetMessageTextRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" });
+var plain = await client.MessagesClient.GetMessageTextPlainAsync(
+    new GetMessageTextPlainRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" });
+var html = await client.MessagesClient.GetMessageTextHtmlAsync(
+    new GetMessageTextHtmlRequest { Domain = "your-private-domain.com", MessageId = "your-message-id" });
+
+string extractedText = extracted.Text;
+string plainText = plain.TextPlain;
+string htmlBody = html.TextHtml;
+```
+
+These endpoints return JSON wrappers with `text`, `text/plain`, and `text/html` fields respectively. The SDK preserves their content, including HTML markup and any quoted-printable artifacts such as `=C2=A0` in extracted text. Empty strings are preserved. These operations do not delete the message.
+
+## Domain and inbox webhooks
+
+These endpoints authenticate with webhook tokens; no API token is needed. Request types are in `mailinator_csharp_client.Models.Webhooks.Requests` and `WebhookMessage` is in `mailinator_csharp_client.Models.Webhooks.Entities`.
+
+```csharp
+var client = new MailinatorClient();
+var webhookToken = Environment.GetEnvironmentVariable("MAILINATOR_WEBHOOK_TOKEN");
+var payload = new WebhookMessage
+{
+    To = "orders",
+    From = "sender@example.com",
+    Subject = "Order notification",
+    Text = "Order received",
+    Html = "<p>Order received</p>"
+};
+
+var domainResult = await client.WebhooksClient.PostWebhookMessageAsync(
+    new PostWebhookMessageRequest
+    {
+        Domain = "your-private-domain.com",
+        WebhookToken = webhookToken,
+        Webhook = payload
+    });
+
+var inboxResult = await client.WebhooksClient.PostWebhookInboxMessageAsync(
+    new PostWebhookInboxMessageRequest
+    {
+        Domain = "your-private-domain.com",
+        Inbox = "orders",
+        WebhookToken = webhookToken,
+        Webhook = payload
+    });
+```
+
+Both methods also accept the webhook token in `Domain`; omit `WebhookToken` for that form. The payload's `To` field is required by the specification. `Headers` accepts a dictionary of string values, and `AdditionalProperties` accepts custom JSON fields. Both responses expose `Status` and `Id`. Existing private/custom-service webhook methods remain available.

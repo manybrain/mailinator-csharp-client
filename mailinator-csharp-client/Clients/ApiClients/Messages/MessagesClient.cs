@@ -1,5 +1,6 @@
 ﻿using mailinator_csharp_client.Clients.HttpClient;
 using mailinator_csharp_client.Helpers;
+using mailinator_csharp_client.Models.Messages.Entities;
 using mailinator_csharp_client.Models.Messages.Requests;
 using mailinator_csharp_client.Models.Responses;
 using RestSharp;
@@ -23,6 +24,114 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             this.endpointUrl = endpointUrl;
         }
 
+        private static string SerializeSort(Sort sort)
+        {
+            switch (sort)
+            {
+                case Sort.asc: return "ascending";
+                case Sort.desc: return "descending";
+                default: throw new ArgumentOutOfRangeException(nameof(sort), sort, "Unsupported sort order.");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves text content for a message in a domain.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>Extracted message text, preserving any quoted-printable artifacts returned by the API.</returns>
+        public async Task<GetMessageTextResponse> GetMessageTextAsync(GetMessageTextRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/text", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageTextResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// Retrieves textplain content for a message in a domain.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>The text/plain message body.</returns>
+        public async Task<GetMessageTextPlainResponse> GetMessageTextPlainAsync(GetMessageTextPlainRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/textplain", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageTextPlainResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// Retrieves texthtml content for a message in a domain.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>The text/html message body, preserving HTML markup.</returns>
+        public async Task<GetMessageTextHtmlResponse> GetMessageTextHtmlAsync(GetMessageTextHtmlRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/texthtml", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageTextHtmlResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// Retrieves message metadata without body content.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>The message summary.</returns>
+        public async Task<GetMessageSummaryResponse> GetMessageSummaryAsync(GetMessageSummaryRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/summary", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageSummaryResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// Retrieves SMTP headers for a message in a domain.
+        /// </summary>
+        /// <param name="request">The domain and message ID.</param>
+        /// <returns>The message's headers.</returns>
+        public async Task<GetMessageHeadersResponse> GetMessageHeadersAsync(GetMessageHeadersRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/messages/{messageId}/headers", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddUrlSegment("messageId", request.MessageId);
+
+            var response = await httpClient.ExecuteAsync<GetMessageHeadersResponse>(requestObject);
+            return response;
+        }
+
+        /// <summary>
+        /// Retrieves message summaries across a domain, optionally filtered by inbox.
+        /// </summary>
+        /// <param name="request">Domain, optional inbox filter, and listing options.</param>
+        /// <returns>Message summaries (or full messages when requested) and a pagination cursor.</returns>
+        public async Task<FetchInboxResponse> ListDomainMessagesAsync(ListDomainMessagesRequest request)
+        {
+            var requestObject = httpClient.GetRequest(endpointUrl + "/{domain}/inboxes", Method.Get);
+            requestObject.AddUrlSegment("domain", request.Domain);
+            requestObject.AddSafeQueryParameter("inbox", request.Inbox);
+            requestObject.AddSafeQueryParameter("skip", request.Skip.ToString());
+            requestObject.AddSafeQueryParameter("limit", request.Limit.ToString());
+            requestObject.AddSafeQueryParameter("sort", SerializeSort(request.Sort));
+            requestObject.AddSafeQueryParameter("decode_subject", request.DecodeSubject.ToString());
+            requestObject.AddSafeQueryParameter("cursor", request.Cursor);
+            requestObject.AddSafeQueryParameter("full", request.Full?.ToString());
+            requestObject.AddSafeQueryParameter("delete", request.Delete);
+            requestObject.AddSafeQueryParameter("wait", request.Wait);
+
+            var response = await httpClient.ExecuteAsync<FetchInboxResponse>(requestObject);
+            return response;
+        }
+
         /// <summary>
         /// This endpoint retrieves a list of messages summaries. You can retreive a list by inbox, inboxes, or entire domain.
         /// :domain	
@@ -44,7 +153,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddSafeQueryParameter("skip", request.Skip.ToString());
             requestObject.AddSafeQueryParameter("limit", request.Limit.ToString());
-            requestObject.AddSafeQueryParameter("sort", request.Sort.ToString());
+            requestObject.AddSafeQueryParameter("sort", SerializeSort(request.Sort));
             requestObject.AddSafeQueryParameter("decode_subject", request.DecodeSubject.ToString());
             requestObject.AddSafeQueryParameter("cursor", request.Cursor?.ToString());
             requestObject.AddSafeQueryParameter("full", request.Full?.ToString());
@@ -66,6 +175,7 @@ namespace mailinator_csharp_client.Clients.ApiClients.Messages
             requestObject.AddUrlSegment("domain", request.Domain);
             requestObject.AddUrlSegment("inbox", request.Inbox);
             requestObject.AddUrlSegment("messageId", request.MessageId);
+            requestObject.AddSafeQueryParameter("delete", request.Delete?.ToString());
 
             var response = await httpClient.ExecuteAsync<FetchInboxMessageResponse>(requestObject);
             return response;

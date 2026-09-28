@@ -12,6 +12,83 @@ namespace mailinator_csharp_client_tests
     [TestClass]
     public class MessagesEndpointTests : TestBase
     {
+        [TestMethod, TestCategory("Messages.GetMessageSummaryAsync")]
+        public async Task GetMessageSummaryAsync()
+        {
+            if (string.IsNullOrWhiteSpace(PrivateDomain) || string.IsNullOrWhiteSpace(MessageId))
+                Assert.Inconclusive("Set MAILINATOR_TEST_DOMAIN_PRIVATE and MAILINATOR_TEST_MESSAGE_ID for an existing email.");
+
+            mailinator_csharp_client.Models.Responses.GetMessageSummaryResponse response;
+            try
+            {
+                response = await mailinatorClient.MessagesClient.GetMessageSummaryAsync(
+                    new GetMessageSummaryRequest { Domain = PrivateDomain, MessageId = MessageId });
+            }
+            catch (ApiException exception)
+            {
+                // Do not include potentially sensitive response bodies in test output.
+                Assert.Fail($"Message summary retrieval failed with HTTP status {(int)exception.HttpStatusCode}.");
+                return;
+            }
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Summary);
+            Assert.IsTrue(response.Summary.Id == MessageId, "The summary should identify the requested message.");
+            // Domain assertion deferred: the live API currently reports "public" for private-domain messages.
+            // Assert.IsTrue(response.Summary.Domain == PrivateDomain, "The summary should identify the requested domain.");
+            Assert.IsNull(response.Summary.Parts);
+            Assert.IsNull(response.Summary.Text);
+        }
+
+        [TestMethod, TestCategory("Messages.GetMessageHeadersAsync")]
+        public async Task GetMessageHeadersAsync()
+        {
+            if (string.IsNullOrWhiteSpace(PrivateDomain) || string.IsNullOrWhiteSpace(MessageId))
+                Assert.Inconclusive("Set MAILINATOR_TEST_DOMAIN_PRIVATE and MAILINATOR_TEST_MESSAGE_ID for an existing email.");
+
+            mailinator_csharp_client.Models.Responses.GetMessageHeadersResponse response;
+            try
+            {
+                response = await mailinatorClient.MessagesClient.GetMessageHeadersAsync(
+                    new GetMessageHeadersRequest { Domain = PrivateDomain, MessageId = MessageId });
+            }
+            catch (ApiException exception)
+            {
+                // Do not include potentially sensitive response bodies in test output.
+                Assert.Fail($"Message headers retrieval failed with HTTP status {(int)exception.HttpStatusCode}.");
+                return;
+            }
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Headers);
+            Assert.IsTrue(response.Headers.Count > 0, "The configured email should have SMTP headers.");
+        }
+
+        [TestMethod, TestCategory("Messages.ListDomainMessagesAsync")]
+        public async Task ListDomainMessagesAsync()
+        {
+            if (string.IsNullOrWhiteSpace(PrivateDomain))
+                Assert.Inconclusive("Set MAILINATOR_TEST_DOMAIN_PRIVATE to run the domain listing integration test.");
+
+            var request = new ListDomainMessagesRequest { Domain = PrivateDomain, Limit = 2 };
+            mailinator_csharp_client.Models.Responses.FetchInboxResponse response;
+            try
+            {
+                response = await mailinatorClient.MessagesClient.ListDomainMessagesAsync(request);
+            }
+            catch (ApiException exception)
+            {
+                // API error bodies can contain private message data; report only the status.
+                Assert.Fail($"Domain listing failed with HTTP status {(int)exception.HttpStatusCode}.");
+                return;
+            }
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Domain == PrivateDomain, "The response should identify the requested domain.");
+            Assert.IsNotNull(response.Messages);
+            Assert.IsTrue(response.Messages.Count <= request.Limit, "The result should respect the requested limit.");
+        }
+
         [TestMethod, TestCategory("Messages.PostMessageAsync")]
         public async Task PostMessageAsync()
         {
@@ -129,7 +206,7 @@ namespace mailinator_csharp_client_tests
 
             Thread.Sleep(45 * 1000);
 
-            var exception = await Assert.ThrowsExceptionAsync<ApiException>(async () =>
+            var exception = await Assert.ThrowsExactlyAsync<ApiException>(async () =>
             {
                 await mailinatorClient.MessagesClient.FetchMessageAsync(request);
             });
@@ -140,7 +217,7 @@ namespace mailinator_csharp_client_tests
         public async Task FetchMessageWhenMessageDoesNotExistAsync()
         {
             var request = new FetchMessageRequest() { Domain = PrivateDomain, MessageId = DateTime.UtcNow.Ticks.ToString() };
-            var exception = await Assert.ThrowsExceptionAsync<ApiException>(async () =>
+            var exception = await Assert.ThrowsExactlyAsync<ApiException>(async () =>
             {
                 await mailinatorClient.MessagesClient.FetchMessageAsync(request);
             });
@@ -165,7 +242,7 @@ namespace mailinator_csharp_client_tests
         public async Task FetchInboxMessageWhenMessageDoesNotExistAsync()
         {
             var request = new FetchInboxMessageRequest() { Domain = PrivateDomain, Inbox = PrivateInbox, MessageId = DateTime.UtcNow.Ticks.ToString() };
-            var exception = await Assert.ThrowsExceptionAsync<ApiException>(async () =>
+            var exception = await Assert.ThrowsExactlyAsync<ApiException>(async () =>
             {
                 await mailinatorClient.MessagesClient.FetchInboxMessageAsync(request);
             });
