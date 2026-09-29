@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on *Keep a Changelog* and this project aims to follow *Semantic Versioning*.
 
-## [2.0.0] - TBD
+## [2.0.0] - 2026-09-28
 
 ### Breaking changes
 

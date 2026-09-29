@@ -1,0 +1,255 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish NuGet package and GitHub Release
+    runs-on: windows-latest
+    timeout-minutes: 30
+    environment: nuget.org
+
+    steps:
+      - name: Check out release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 8.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Validate release version
+        shell: pwsh
+        env:
+          RELEASE_REF: ${{ github.ref }}
+        run: |
+          if ($env:RELEASE_REF -ne 'refs/heads/master') {
+            throw 'Run releases from the master branch.'
+          }
+
+          [xml]$project = Get-Content 'mailinator-csharp-client/mailinator-csharp-client.csproj'
+          $projectVersion = [string]$project.Project.PropertyGroup.Version
+          if ($projectVersion -notmatch '^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$') {
+            throw "Project version '$projectVersion' must use the form 1.2.3 or 1.2.3-prerelease."
+          }
+
+          $escapedVersion = [Regex]::Escape($projectVersion)
+          $changelog = Get-Content 'CHANGELOG.md' -Raw
+          if ($changelog -notmatch "(?m)^## \[$escapedVersion\] - [0-9]{4}-[0-9]{2}-[0-9]{2}\r?$") {
+            throw "CHANGELOG.md must contain a dated release heading for $projectVersion."
+          }
+
+          "PACKAGE_VERSION=$projectVersion" >> $env:GITHUB_ENV
+          "RELEASE_TAG=v$projectVersion" >> $env:GITHUB_ENV
+
+      - name: Restore locked dependencies
+        run: dotnet restore mailinator-csharp-client.sln --locked-mode
+
+      - name: Build
+        run: >-
+          dotnet build
+          mailinator-csharp-client.sln
+          --configuration Release
+          --no-restore
+          -p:ContinuousIntegrationBuild=true
+
+      - name: Run offline unit tests
+        run: >-
+          dotnet test
+          mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-tests.csproj
+          --configuration Release
+          --no-build
+          --no-restore
+
+      - name: Pack
+        run: >-
+          dotnet pack
+          mailinator-csharp-client/mailinator-csharp-client.csproj
+          --configuration Release
+          --no-build
+          --no-restore
+          --output artifacts
+          -p:ContinuousIntegrationBuild=true
+          -p:RepositoryCommit=${{ github.sha }}
+
+      - name: Validate package and prepare release notes
+        shell: pwsh
+        run: |
+          $packages = @(Get-ChildItem 'artifacts/*.nupkg' | Where-Object Name -NotLike '*.snupkg')
+          if ($packages.Count -ne 1) {
+            throw "Expected one NuGet package, found $($packages.Count)."
+          }
+
+          $expectedName = "MailinatorApiClient.$env:PACKAGE_VERSION.nupkg"
+          if ($packages[0].Name -ne $expectedName) {
+            throw "Expected package '$expectedName', found '$($packages[0].Name)'."
+          }
+
+          $lines = @(Get-Content 'CHANGELOG.md')
+          $heading = $lines | Where-Object { $_ -match "^## \[$([Regex]::Escape($env:PACKAGE_VERSION))\] - " } | Select-Object -First 1
+          $start = [Array]::IndexOf($lines, $heading)
+          if ($start -lt 0) {
+            throw "Could not find release notes for $env:PACKAGE_VERSION."
+          }
+
+          $end = $lines.Count
+          for ($index = $start + 1; $index -lt $lines.Count; $index++) {
+            if ($lines[$index] -match '^## \[') {
+              $end = $index
+              break
+            }
+          }
+
+          $notes = ($lines[($start + 1)..($end - 1)] -join [Environment]::NewLine).Trim()
+          if ([string]::IsNullOrWhiteSpace($notes)) {
+            throw "Release notes for $env:PACKAGE_VERSION are empty."
+          }
+
+          $notes | Set-Content 'artifacts/release-notes.md' -Encoding utf8
+          "PACKAGE_PATH=$($packages[0].FullName)" >> $env:GITHUB_ENV
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: MailinatorApiClient-${{ env.PACKAGE_VERSION }}
+          path: ${{ env.PACKAGE_PATH }}
+          if-no-files-found: error
+
+      - name: Create or verify annotated release tag
+        shell: pwsh
+        env:
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          $remoteHead = git ls-remote origin refs/heads/master
+          if ($LASTEXITCODE -ne 0 -or -not $remoteHead) {
+            throw 'Could not check the remote master branch.'
+          }
+          if (($remoteHead -split '\s+')[0] -ne $env:RELEASE_COMMIT) {
+            throw 'Master changed during this release run. Start a new release run from the latest commit.'
+          }
+
+          $tagRefs = @(git ls-remote origin "refs/tags/$env:RELEASE_TAG" "refs/tags/$env:RELEASE_TAG^{}")
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not check whether release tag $env:RELEASE_TAG exists."
+          }
+
+          if ($tagRefs.Count -gt 0) {
+            $peeledRefName = "refs/tags/$env:RELEASE_TAG^{}"
+            $peeledTag = $tagRefs |
+              Where-Object { ($_ -split '\s+')[1] -eq $peeledRefName } |
+              Select-Object -First 1
+
+            if (-not $peeledTag) {
+              throw "Existing release tag $env:RELEASE_TAG is not annotated."
+            }
+
+            $existingTagCommit = ($peeledTag -split '\s+')[0]
+            if ($existingTagCommit -ne $env:RELEASE_COMMIT) {
+              throw "Existing release tag $env:RELEASE_TAG points to $existingTagCommit instead of $env:RELEASE_COMMIT."
+            }
+
+            Write-Host "Existing release tag $env:RELEASE_TAG points to the release commit; resuming the release."
+            'RELEASE_TAG_REUSED=true' >> $env:GITHUB_ENV
+          }
+          else {
+            $env:GIT_COMMITTER_NAME = 'github-actions[bot]'
+            $env:GIT_COMMITTER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com'
+            git tag -a "$env:RELEASE_TAG" -m "MailinatorApiClient $env:PACKAGE_VERSION" "$env:RELEASE_COMMIT"
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to create release tag $env:RELEASE_TAG."
+            }
+            git push origin "refs/tags/$env:RELEASE_TAG"
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to push release tag $env:RELEASE_TAG."
+            }
+            'RELEASE_TAG_REUSED=false' >> $env:GITHUB_ENV
+          }
+
+      - name: Authenticate to NuGet.org
+        id: nuget_login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish to NuGet.org
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
+        run: |
+          $pushArguments = @('nuget', 'push', $env:PACKAGE_PATH, '--source', 'https://api.nuget.org/v3/index.json')
+          if ($env:RELEASE_TAG_REUSED -eq 'true') {
+            $pushArguments += '--skip-duplicate'
+          }
+
+          & dotnet @pushArguments
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to publish package $env:PACKAGE_PATH to NuGet.org."
+          }
+
+      - name: Create GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $releaseJson = gh release view "$env:RELEASE_TAG" --json isDraft,assets 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            $release = $releaseJson | ConvertFrom-Json
+            $packageName = [IO.Path]::GetFileName($env:PACKAGE_PATH)
+            $asset = $release.assets | Where-Object name -eq $packageName | Select-Object -First 1
+
+            if ($release.isDraft) {
+              if (-not $asset) {
+                gh release upload "$env:RELEASE_TAG" "$env:PACKAGE_PATH"
+                if ($LASTEXITCODE -ne 0) {
+                  throw "Failed to upload package to draft GitHub Release $env:RELEASE_TAG."
+                }
+              }
+
+              gh release edit "$env:RELEASE_TAG" --draft=false
+              if ($LASTEXITCODE -ne 0) {
+                throw "Failed to publish draft GitHub Release $env:RELEASE_TAG."
+              }
+              Write-Host "Completed draft GitHub Release $env:RELEASE_TAG."
+              exit 0
+            }
+
+            if (-not $asset) {
+              throw "GitHub Release $env:RELEASE_TAG exists without package asset $packageName."
+            }
+
+            Write-Host "GitHub Release $env:RELEASE_TAG already exists with its package asset; leaving it unchanged."
+            exit 0
+          }
+
+          $releaseArguments = @(
+            'release'
+            'create'
+            $env:RELEASE_TAG
+            $env:PACKAGE_PATH
+            '--verify-tag'
+            '--title'
+            "MailinatorApiClient $env:PACKAGE_VERSION"
+            '--notes-file'
+            'artifacts/release-notes.md'
+          )
+          if ($env:PACKAGE_VERSION.Contains('-')) {
+            $releaseArguments += '--prerelease'
+            $releaseArguments += '--latest=false'
+          }
+
+          & gh @releaseArguments
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to create GitHub Release $env:RELEASE_TAG."
+          }
