@@ -126,7 +126,7 @@ jobs:
           path: ${{ env.PACKAGE_PATH }}
           if-no-files-found: error
 
-      - name: Create and push annotated release tag
+      - name: Create or verify annotated release tag
         shell: pwsh
         env:
           RELEASE_COMMIT: ${{ github.sha }}
@@ -139,23 +139,39 @@ jobs:
             throw 'Master changed during this release run. Start a new release run from the latest commit.'
           }
 
-          $existingTag = git ls-remote --exit-code origin "refs/tags/$env:RELEASE_TAG"
-          if ($LASTEXITCODE -eq 0) {
-            throw "Release tag $env:RELEASE_TAG already exists."
-          }
-          if ($LASTEXITCODE -ne 2) {
+          $tagRefs = @(git ls-remote origin "refs/tags/$env:RELEASE_TAG" "refs/tags/$env:RELEASE_TAG^{}")
+          if ($LASTEXITCODE -ne 0) {
             throw "Could not check whether release tag $env:RELEASE_TAG exists."
           }
 
-          $env:GIT_COMMITTER_NAME = 'github-actions[bot]'
-          $env:GIT_COMMITTER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com'
-          git tag -a "$env:RELEASE_TAG" -m "MailinatorApiClient $env:PACKAGE_VERSION" "$env:RELEASE_COMMIT"
-          if ($LASTEXITCODE -ne 0) {
-            throw "Failed to create release tag $env:RELEASE_TAG."
+          if ($tagRefs.Count -gt 0) {
+            $peeledRefName = "refs/tags/$env:RELEASE_TAG^{}"
+            $peeledTag = $tagRefs |
+              Where-Object { ($_ -split '\s+')[1] -eq $peeledRefName } |
+              Select-Object -First 1
+
+            if (-not $peeledTag) {
+              throw "Existing release tag $env:RELEASE_TAG is not annotated."
+            }
+
+            $existingTagCommit = ($peeledTag -split '\s+')[0]
+            if ($existingTagCommit -ne $env:RELEASE_COMMIT) {
+              throw "Existing release tag $env:RELEASE_TAG points to $existingTagCommit instead of $env:RELEASE_COMMIT."
+            }
+
+            Write-Host "Existing release tag $env:RELEASE_TAG points to the release commit; resuming the release."
           }
-          git push origin "refs/tags/$env:RELEASE_TAG"
-          if ($LASTEXITCODE -ne 0) {
-            throw "Failed to push release tag $env:RELEASE_TAG."
+          else {
+            $env:GIT_COMMITTER_NAME = 'github-actions[bot]'
+            $env:GIT_COMMITTER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com'
+            git tag -a "$env:RELEASE_TAG" -m "MailinatorApiClient $env:PACKAGE_VERSION" "$env:RELEASE_COMMIT"
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to create release tag $env:RELEASE_TAG."
+            }
+            git push origin "refs/tags/$env:RELEASE_TAG"
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to push release tag $env:RELEASE_TAG."
+            }
           }
 
       - name: Authenticate to NuGet.org
@@ -171,6 +187,7 @@ jobs:
         run: >-
           dotnet nuget push "$env:PACKAGE_PATH"
           --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
 
       - name: Create GitHub Release
         shell: pwsh
@@ -183,10 +200,23 @@ jobs:
             exit 0
           }
 
-          gh release create "$env:RELEASE_TAG" "$env:PACKAGE_PATH" `
-            --verify-tag `
-            --title "MailinatorApiClient $env:PACKAGE_VERSION" `
-            --notes-file 'artifacts/release-notes.md'
+          $releaseArguments = @(
+            'release'
+            'create'
+            $env:RELEASE_TAG
+            $env:PACKAGE_PATH
+            '--verify-tag'
+            '--title'
+            "MailinatorApiClient $env:PACKAGE_VERSION"
+            '--notes-file'
+            'artifacts/release-notes.md'
+          )
+          if ($env:PACKAGE_VERSION.Contains('-')) {
+            $releaseArguments += '--prerelease'
+            $releaseArguments += '--latest=false'
+          }
+
+          & gh @releaseArguments
 
           if ($LASTEXITCODE -ne 0) {
             throw "Failed to create GitHub Release $env:RELEASE_TAG."
