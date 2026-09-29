@@ -160,6 +160,7 @@ jobs:
             }
 
             Write-Host "Existing release tag $env:RELEASE_TAG points to the release commit; resuming the release."
+            'RELEASE_TAG_REUSED=true' >> $env:GITHUB_ENV
           }
           else {
             $env:GIT_COMMITTER_NAME = 'github-actions[bot]'
@@ -172,6 +173,7 @@ jobs:
             if ($LASTEXITCODE -ne 0) {
               throw "Failed to push release tag $env:RELEASE_TAG."
             }
+            'RELEASE_TAG_REUSED=false' >> $env:GITHUB_ENV
           }
 
       - name: Authenticate to NuGet.org
@@ -184,19 +186,49 @@ jobs:
         shell: pwsh
         env:
           NUGET_API_KEY: ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
-        run: >-
-          dotnet nuget push "$env:PACKAGE_PATH"
-          --source https://api.nuget.org/v3/index.json
-          --skip-duplicate
+        run: |
+          $pushArguments = @('nuget', 'push', $env:PACKAGE_PATH, '--source', 'https://api.nuget.org/v3/index.json')
+          if ($env:RELEASE_TAG_REUSED -eq 'true') {
+            $pushArguments += '--skip-duplicate'
+          }
+
+          & dotnet @pushArguments
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to publish package $env:PACKAGE_PATH to NuGet.org."
+          }
 
       - name: Create GitHub Release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view "$env:RELEASE_TAG" *> $null
+          $releaseJson = gh release view "$env:RELEASE_TAG" --json isDraft,assets 2>$null
           if ($LASTEXITCODE -eq 0) {
-            Write-Host "GitHub Release $env:RELEASE_TAG already exists; leaving it unchanged."
+            $release = $releaseJson | ConvertFrom-Json
+            $packageName = [IO.Path]::GetFileName($env:PACKAGE_PATH)
+            $asset = $release.assets | Where-Object name -eq $packageName | Select-Object -First 1
+
+            if ($release.isDraft) {
+              if (-not $asset) {
+                gh release upload "$env:RELEASE_TAG" "$env:PACKAGE_PATH"
+                if ($LASTEXITCODE -ne 0) {
+                  throw "Failed to upload package to draft GitHub Release $env:RELEASE_TAG."
+                }
+              }
+
+              gh release edit "$env:RELEASE_TAG" --draft=false
+              if ($LASTEXITCODE -ne 0) {
+                throw "Failed to publish draft GitHub Release $env:RELEASE_TAG."
+              }
+              Write-Host "Completed draft GitHub Release $env:RELEASE_TAG."
+              exit 0
+            }
+
+            if (-not $asset) {
+              throw "GitHub Release $env:RELEASE_TAG exists without package asset $packageName."
+            }
+
+            Write-Host "GitHub Release $env:RELEASE_TAG already exists with its package asset; leaving it unchanged."
             exit 0
           }
 
