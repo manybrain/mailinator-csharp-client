@@ -1,16 +1,14 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
   id-token: write
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release
   cancel-in-progress: false
 
 jobs:
@@ -21,7 +19,7 @@ jobs:
     environment: nuget.org
 
     steps:
-      - name: Check out tagged source
+      - name: Check out release source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up .NET
@@ -34,27 +32,26 @@ jobs:
       - name: Validate release version
         shell: pwsh
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_REF: ${{ github.ref }}
         run: |
-          if ($env:RELEASE_TAG -notmatch '^v(?<version>[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?)$') {
-            throw "Release tag '$env:RELEASE_TAG' must use the form v1.2.3 or v1.2.3-prerelease."
+          if ($env:RELEASE_REF -ne 'refs/heads/master') {
+            throw 'Run releases from the master branch.'
           }
 
-          $tagVersion = $Matches.version
           [xml]$project = Get-Content 'mailinator-csharp-client/mailinator-csharp-client.csproj'
           $projectVersion = [string]$project.Project.PropertyGroup.Version
-
-          if ($projectVersion -ne $tagVersion) {
-            throw "Tag version '$tagVersion' does not match project version '$projectVersion'."
+          if ($projectVersion -notmatch '^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$') {
+            throw "Project version '$projectVersion' must use the form 1.2.3 or 1.2.3-prerelease."
           }
 
           $escapedVersion = [Regex]::Escape($projectVersion)
           $changelog = Get-Content 'CHANGELOG.md' -Raw
-          if ($changelog -notmatch "(?m)^## \[$escapedVersion\] - [0-9]{4}-[0-9]{2}-[0-9]{2}$") {
+          if ($changelog -notmatch "(?m)^## \[$escapedVersion\] - [0-9]{4}-[0-9]{2}-[0-9]{2}\r?$") {
             throw "CHANGELOG.md must contain a dated release heading for $projectVersion."
           }
 
           "PACKAGE_VERSION=$projectVersion" >> $env:GITHUB_ENV
+          "RELEASE_TAG=v$projectVersion" >> $env:GITHUB_ENV
 
       - name: Restore locked dependencies
         run: dotnet restore mailinator-csharp-client.sln --locked-mode
@@ -129,6 +126,38 @@ jobs:
           path: ${{ env.PACKAGE_PATH }}
           if-no-files-found: error
 
+      - name: Create and push annotated release tag
+        shell: pwsh
+        env:
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          $remoteHead = git ls-remote origin refs/heads/master
+          if ($LASTEXITCODE -ne 0 -or -not $remoteHead) {
+            throw 'Could not check the remote master branch.'
+          }
+          if (($remoteHead -split '\s+')[0] -ne $env:RELEASE_COMMIT) {
+            throw 'Master changed during this release run. Start a new release run from the latest commit.'
+          }
+
+          $existingTag = git ls-remote --exit-code origin "refs/tags/$env:RELEASE_TAG"
+          if ($LASTEXITCODE -eq 0) {
+            throw "Release tag $env:RELEASE_TAG already exists."
+          }
+          if ($LASTEXITCODE -ne 2) {
+            throw "Could not check whether release tag $env:RELEASE_TAG exists."
+          }
+
+          $env:GIT_COMMITTER_NAME = 'github-actions[bot]'
+          $env:GIT_COMMITTER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag -a "$env:RELEASE_TAG" -m "MailinatorApiClient $env:PACKAGE_VERSION" "$env:RELEASE_COMMIT"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to create release tag $env:RELEASE_TAG."
+          }
+          git push origin "refs/tags/$env:RELEASE_TAG"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to push release tag $env:RELEASE_TAG."
+          }
+
       - name: Authenticate to NuGet.org
         id: nuget_login
         uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
@@ -142,13 +171,11 @@ jobs:
         run: >-
           dotnet nuget push "$env:PACKAGE_PATH"
           --source https://api.nuget.org/v3/index.json
-          --skip-duplicate
 
       - name: Create GitHub Release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           gh release view "$env:RELEASE_TAG" *> $null
           if ($LASTEXITCODE -eq 0) {
