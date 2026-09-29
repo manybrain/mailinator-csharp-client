@@ -27,7 +27,9 @@ Prepare and merge the release changes before starting the workflow:
 3. Confirm CI passes on `master`.
 4. In GitHub Actions, run the **Release** workflow on `master`.
 
-The workflow verifies the project version and changelog; restores locked dependencies; builds the solution; runs only the offline unit tests; and creates the package. It checks that `master` has not advanced and the version tag is unused, then creates and pushes an annotated `vX.Y.Z` tag before publishing to NuGet.org. Finally, it creates a GitHub Release with the package attached. A failed publish leaves the tag in place for diagnosis; do not rerun the workflow with the same version.
+The workflow verifies the project version and changelog; restores locked dependencies; builds the solution; runs only the offline unit tests; and creates the package. It checks that `master` has not advanced, then creates and pushes an annotated `vX.Y.Z` tag before publishing to NuGet.org. Finally, it creates a GitHub Release with the package attached. Prerelease package versions produce GitHub prereleases and are not marked latest.
+
+The workflow is safe to rerun after a partial failure. It resumes when the existing annotated tag points to the same release commit, skips a package version that NuGet.org already has, and leaves an existing GitHub Release unchanged. It stops if the tag is lightweight or points to another commit.
 
 Do not move or reuse a published version tag. NuGet package versions are immutable.
 
