@@ -14,25 +14,20 @@ The release workflow uses NuGet.org trusted publishing, so it does not store a l
    - environment: `nuget.org`
    - scope: publishing new versions of existing packages
    - package glob: `MailinatorApiClient`
-3. Protect tag names matching `v*` in GitHub so only release maintainers can create them.
+3. If tag rules protect names matching `v*`, allow this release workflow to create those tags with its `contents: write` token.
 
 The workflow needs to be present on the repository's default branch before its trusted publishing policy can be used for a release.
 
 ## Automated release
 
-Prepare and merge the release changes before creating the tag:
+Prepare and merge the release changes before starting the workflow:
 
 1. Set `Version`, `AssemblyVersion`, and `FileVersion` in `mailinator-csharp-client/mailinator-csharp-client.csproj`.
 2. Add a dated `## [x.y.z] - YYYY-MM-DD` entry to `CHANGELOG.md`.
 3. Confirm CI passes on `master`.
-4. From an up-to-date, clean `master`, create and push the annotated tag:
+4. In GitHub Actions, run the **Release** workflow on `master`.
 
-   ```sh
-   git tag -a v2.0.0 -m "MailinatorApiClient 2.0.0"
-   git push origin v2.0.0
-   ```
-
-The tag starts `.github/workflows/release.yml`. The workflow verifies that the tag, project version, and changelog agree; restores locked dependencies; builds the solution; runs only the offline unit tests; creates the package; publishes it to NuGet.org; and creates a GitHub Release with the package attached.
+The workflow verifies the project version and changelog; restores locked dependencies; builds the solution; runs only the offline unit tests; and creates the package. It checks that `master` has not advanced and the version tag is unused, then creates and pushes an annotated `vX.Y.Z` tag before publishing to NuGet.org. Finally, it creates a GitHub Release with the package attached. A failed publish leaves the tag in place for diagnosis; do not rerun the workflow with the same version.
 
 Do not move or reuse a published version tag. NuGet package versions are immutable.
 
@@ -50,11 +45,13 @@ dotnet pack mailinator-csharp-client/mailinator-csharp-client.csproj --configura
 Inspect `artifacts/MailinatorApiClient.x.y.z.nupkg` before publishing. Create a short-lived NuGet.org API key restricted to pushing new versions of `MailinatorApiClient`, then enter it without placing it in shell history:
 
 ```powershell
+git tag -a vX.Y.Z -m "MailinatorApiClient X.Y.Z"
+git push origin vX.Y.Z
 $env:NUGET_API_KEY = Read-Host 'NuGet API key' -MaskInput
 dotnet nuget push artifacts/MailinatorApiClient.x.y.z.nupkg --source https://api.nuget.org/v3/index.json
 Remove-Item Env:NUGET_API_KEY
 ```
 
-After a successful manual push, create and push the annotated tag, then create the corresponding GitHub Release from that tag and attach the same `.nupkg` file.
+Create the tag on the exact commit used to build the package. After publishing, create the corresponding GitHub Release from that tag and attach the same `.nupkg` file.
 
 The live integration-test project is deliberately excluded from both release paths. It requires a configured Mailinator account and includes tests that mutate remote resources; see `TESTING.md` before running it.
