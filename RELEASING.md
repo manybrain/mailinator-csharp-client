@@ -29,7 +29,7 @@ Prepare and merge the release changes before starting the workflow:
 
 The workflow verifies the project version and changelog; restores locked dependencies; builds the solution; runs only the offline unit tests; and creates the package. It checks that `master` has not advanced, then creates and pushes an annotated `vX.Y.Z` tag before publishing to NuGet.org. Finally, it creates a GitHub Release with the package attached. Prerelease package versions produce GitHub prereleases and are not marked latest.
 
-The workflow is safe to rerun after a partial failure. It resumes when the existing annotated tag points to the same release commit, skips a package version that NuGet.org already has, and leaves an existing GitHub Release unchanged. It stops if the tag is lightweight or points to another commit.
+The workflow can resume after a partial failure. It resumes when the existing annotated tag points to the same release commit, skips a package version that NuGet.org already has only on a retry, and completes an unfinished draft GitHub Release. It leaves a published GitHub Release unchanged only when the package asset is present. It stops if the tag is lightweight, points to another commit, or a published release is missing its package asset.
 
 Do not move or reuse a published version tag. NuGet package versions are immutable.
 
