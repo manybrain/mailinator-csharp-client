@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and offline tests
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 8.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Restore locked dependencies
+        run: dotnet restore mailinator-csharp-client.sln --locked-mode
+
+      - name: Build
+        run: dotnet build mailinator-csharp-client.sln --configuration Release --no-restore
+
+      - name: Run offline unit tests
+        run: >-
+          dotnet test
+          mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-tests.csproj
+          --configuration Release
+          --no-build
+          --no-restore

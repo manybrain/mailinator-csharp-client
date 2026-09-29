@@ -111,3 +111,5 @@ dotnet test mailinator-csharp-client-unit-tests/mailinator-csharp-client-unit-te
 The separate legacy integration suite calls the live Mailinator API and requires deliberate account configuration. Some tests create or delete remote resources. Read [TESTING.md](TESTING.md) before running it.
 
 To compare the SDK request surface with the OpenAPI specification, use the [OpenAPI coverage check](eng/README.md#openapi-coverage-check).
+
+Maintainers should follow [RELEASING.md](RELEASING.md) to publish NuGet packages and matching GitHub Releases.
